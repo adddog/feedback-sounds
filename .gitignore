@@ -1,0 +1,21 @@
+bower_components
+node_modules
+*.log
+.DS_Store
+
+*.map
+*.mp4
+package-lock.json
+
+*.crt
+*.key
+*.cer
+*.pem
+
+/docs
+
+Autodafe - Mega Drum Machines Collection
+autodafe-mega-drum-machines-collection.zip
+*.jpg
+*.png
+*.csv

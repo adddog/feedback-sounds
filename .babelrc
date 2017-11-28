@@ -1,0 +1,9 @@
+{
+  "plugins": [
+  "transform-decorators-legacy",
+  "transform-async-to-generator",
+   ["module-resolver", {
+      "root": ["./src/js"]
+    }]
+  ]
+}

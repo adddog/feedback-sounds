@@ -1,0 +1,5 @@
+librosa
+
+imagemagick
+
+ffmpeg
