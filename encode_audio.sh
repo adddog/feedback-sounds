@@ -1,6 +1,6 @@
 #!/bin/bash
 JSON="audio.json"
-find "audio" -name "*.wav" -print0 | while read -d '' -r file;
+find "audio" -name "*.wav" -o -name '*.WAV' -print0 | while read -d '' -r file;
 do
     echo "$file"
     filenameNoExt="${file%.*}"

@@ -11,7 +11,8 @@ const WIDTH = 480
 const HEIGHT = 640
 
 function store(state, emitter) {
-  emitter.on("DOMContentLoaded", function() {
+  emitter.on("DOMContentLoaded", function(el) {
+
     console.log("DOMContentLoaded")
 
     request(
@@ -41,7 +42,7 @@ function store(state, emitter) {
         console.log("LOADED SOUNDS")
         console.log(STATE.files)
 
-        let regl = Regl(document.querySelector(".home-regl"))
+        const regl = Regl(document.querySelector(".app"))
         const music = Music()
       }
     )

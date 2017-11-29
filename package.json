@@ -22,6 +22,7 @@
         "camera-picking-ray": "^1.0.1",
         "choo": "^6.5.1",
         "choo-devtools": "^2.1.0",
+        "color": "^2.0.1",
         "dat.gui": "github:dataarts/dat.gui",
         "geo-3d-box": "^2.0.2",
         "geo-arc": "^1.1.2",

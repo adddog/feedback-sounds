@@ -1,14 +1,11 @@
 const normals = require("angle-normals")
 import { VERT, FRAG } from "./glsl"
-import { BaseMesh, reglGeo } from "./base"
+import { BaseMesh, reglGeo,torusSettings } from "./base"
 import { REGL_CONST } from "../common"
 import { mat4 } from "gl-matrix"
 
 const torusGeometry = regl => {
-  const torus = require("primitive-torus")({
-    majorSegments:8,
-    minorSegments:16,
-  })
+  const torus = require("primitive-torus")(torusSettings)
 
   class torusMesh extends BaseMesh {
     constructor(geo,props){

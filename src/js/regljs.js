@@ -1,8 +1,9 @@
 import Regl from "regl"
+import { v4 } from "uuid"
 import { mat4, vec3 } from "gl-matrix"
-import { compact, values, sample } from "lodash"
+import { assign, compact, values, sample } from "lodash"
 import Emitter from "./emitter"
-import { SAMPLE_TYPES, REGL_CONST, getColor } from "./common"
+import { SAMPLE_TYPES, STATE, REGL_CONST, getColor } from "./common"
 import Geometry from "./geometry"
 import ReglGeometryActions from "./regl-actions"
 import { cover } from "intrinsic-scale"
@@ -19,7 +20,6 @@ const REGL = el => {
   const reglGeometryActions = ReglGeometryActions(regl)
   let eyeMatrix = mat4.create()
   let deviceAcceleration = vec3.create()
-  const pixels = regl.texture()
 
   const drawFeedback = regl({
     frag: `
@@ -52,7 +52,6 @@ const REGL = el => {
     },
 
     uniforms: {
-      texture: pixels,
       aspect: ({ viewportHeight, viewportWidth }) =>
         viewportWidth / viewportHeight,
       t: ({ tick }) => tick * 0.01,
@@ -86,18 +85,12 @@ const REGL = el => {
     },
   })
 
-  const geometries = Geometry(regl)
+  let _allowRender = true
+  Emitter.on("window:blur", () => (_allowRender = false))
+  Emitter.on("window:focus", () => (_allowRender = true))
 
-  function createGeometry(s, type = "fly", props) {
-    s = s || { ...sample(values(SAMPLE_TYPES)) }
-    const newS = geometries[s.shape].create(props)
-    reglGeometryActions.add(newS, type, {
-      color: [0.5, 0.2, 0.7],
-      shape: s,
-    })
-  }
-
-  regl.frame(function() {
+  const drawRegl = () => {
+    if (!_allowRender) return
     setupCamera(() => {
       regl.clear({
         color: [0, 0, 0, 1],
@@ -107,7 +100,47 @@ const REGL = el => {
 
       //newS.draw({color:[0.39, 0.87, 0.29]})
     })
+  }
+
+  function update() {
+    drawRegl()
+  }
+
+  regl.frame(function() {
+    drawRegl()
   })
+
+  const geometries = Geometry(regl)
+
+  const _defaultGeoprops = (props = {}) =>
+    assign(
+      {
+        ambientLightAmount: {
+          value: REGL_CONST.AMBIENT_LIGHT,
+        },
+        diffuseLightAmount: {
+          value: REGL_CONST.DIFFUSE_LIGHT,
+        },
+      },
+      props
+    )
+
+  function createGeometry(soundData, type = "fly", props) {
+    props = props || _defaultGeoprops()
+    soundData = soundData || { ...sample(values(SAMPLE_TYPES)) }
+    assign(props, {
+      color: {
+        value: soundData.color
+          .rgb()
+          .array()
+          .map(v => v / 255),
+      },
+    })
+
+    const newS = geometries[soundData.shape].create(props)
+    props.shape = soundData
+    reglGeometryActions.add(newS, type, props)
+  }
 
   function destroy() {
     console.log("destroy")
@@ -118,10 +151,8 @@ const REGL = el => {
     createGeometry()
   })
 
-  Emitter.on("object:clicked", ({ object, hit }) => {
-    createGeometry(object.props.shape, "static", {
-      position: object.position,
-    })
+  Emitter.on("object:clicked", ({ soundData, props, hit }) => {
+    createGeometry(soundData, "static", props)
   })
 
   createGeometry()
@@ -148,12 +179,24 @@ const REGL = el => {
     const staticObjects = reglGeometryActions.getObjectsAndPositions(
       "static"
     )
+    const RADIUS = 1.2
     const staticHits = staticObjects
       .map(({ position }) => position)
-      .map(pos => intersect([], ray.ro, ray.rd, pos, 1.5))
+      .map(pos =>
+        intersect(
+          [],
+          ray.ro,
+          ray.rd,
+          pos,
+          RADIUS * REGL_CONST.STATIC_SCALE
+        )
+      )
     let i = 0
     for (i = 0; i < staticHits.length; i++) {
-      if (staticHits[i]) {
+      if (
+        staticHits[i] &&
+        staticObjects[i].framesRendered > STATE.fps * 2
+      ) {
         Emitter.emit(
           "object:removed",
           reglGeometryActions.removeAt(i, "static")
@@ -163,16 +206,26 @@ const REGL = el => {
     }
 
     const flyHits = positions.map(pos =>
-      intersect([], ray.ro, ray.rd, pos, 1.5)
+      intersect([], ray.ro, ray.rd, pos, RADIUS)
     )
     i = 0
     for (i; i < flyHits.length; i++) {
       const hit = flyHits[i]
       if (hit) {
+        /*
+        Create a new object with these settings
+        this will be the statis mesh
+        */
         Emitter.emit("object:clicked", {
-          object: flyObjects[i],
+          soundData: flyObjects[i].props.shape,
+          props: _defaultGeoprops({
+            ...flyObjects[i].props,
+            uuid: v4(),
+            position: positions[i],
+          }),
           hit: hit,
         })
+
         break
       }
     }

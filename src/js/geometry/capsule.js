@@ -5,7 +5,7 @@ import { REGL_CONST } from "../common"
 import { mat4 } from "gl-matrix"
 
 const CapsuleGeometry = regl => {
-  const capsule = require("primitive-capsule")(1,1,6,6)
+  const capsule = require("primitive-capsule")(1,1,4,4)
 
   class CapsuleMesh extends BaseMesh {
     constructor(geo,props) {

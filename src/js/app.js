@@ -17,6 +17,7 @@ function mainView(state, emit) {
     class="app"
     onload=${onload}
     >
+    <div class="sequencer"></div>
     </div>
   `
 }

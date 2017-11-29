@@ -4,6 +4,11 @@ import { REGL_CONST } from "../common"
 import { mat4 } from "gl-matrix"
 import { v4 } from "uuid"
 
+export const torusSettings = () => ({
+  majorSegments: 4,
+  minorSegments: 8,
+})
+
 export const reglGeo = (regl, geo) => {
   return {
     vert: VERT,
@@ -14,11 +19,16 @@ export const reglGeo = (regl, geo) => {
       model: regl.this("modelMatrix"),
       view: regl.context("view"),
       projection: regl.context("projection"),
-      ambientLightAmount: 0.6,
-      diffuseLightAmount: 0.3,
+      ambientLightAmount: regl.prop("ambientLightAmount"),
+      diffuseLightAmount: regl.prop("diffuseLightAmount"),
       color: regl.prop("color"),
       texture: regl.prop("texture"),
       tick: regl.context("tick"),
+      rotationAxis: [
+        Math.round(Math.random()),
+        Math.round(Math.random()),
+        Math.round(Math.random()),
+      ],
       lightDir: [0.39, 0.87, 0.29],
     },
 
@@ -34,7 +44,9 @@ export const reglGeo = (regl, geo) => {
 
 export class BaseMesh {
   constructor(geo, props = {}) {
-    this.uuid = v4()
+    this.framesRendered = 0
+
+    this.uuid = props.uuid || v4()
     this._normals = normals(geo.cells, geo.positions)
     this.modelMatrix = mat4.create()
     if (props.position) {
