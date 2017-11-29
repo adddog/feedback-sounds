@@ -2,6 +2,7 @@ import Regl from "regl"
 import { v4 } from "uuid"
 import { mat4, vec3 } from "gl-matrix"
 import { assign, compact, values, sample } from "lodash"
+import EaseNumber from "./ease-number"
 import Emitter from "./emitter"
 import { SAMPLE_TYPES, STATE, REGL_CONST, getColor } from "./common"
 import Geometry from "./geometry"
@@ -18,8 +19,6 @@ const REGL = el => {
     container: el,
   })
   const reglGeometryActions = ReglGeometryActions(regl)
-  let eyeMatrix = mat4.create()
-  let deviceAcceleration = vec3.create()
 
   const drawFeedback = regl({
     frag: `
@@ -62,7 +61,39 @@ const REGL = el => {
 
   const EYE = [0, 0, 1]
   let projectionMat = mat4.create()
-  let viewMatrix = mat4.lookAt([], EYE, [0, 0, 0], [0, 1, 0])
+const degToRad = degrees => degrees * (Math.PI / 180)
+
+  function polarToVector3(lon, lat, radius, vector) {
+    const phi = degToRad(1.5 - lat)
+    const theta = degToRad(lon)
+    vec3.set(
+      vector,
+      radius * Math.sin(phi) * Math.cos(theta),
+      radius * Math.cos(phi),
+      Math.abs(radius * Math.sin(phi) * Math.sin(theta))
+    )
+
+    return vector
+  }
+
+  const eyeMatrix = vec3.fromValues(0, 0, 1)
+  const viewMatrix = mat4.create()
+
+  const latEase = new EaseNumber(0, 0.001)
+  const lonEase = new EaseNumber(0, 0.001)
+
+  window.addEventListener("mousemove", e => {
+    let { pageX, pageY } = e
+    pageX -= window.innerWidth / 2
+    pageX /= window.innerWidth
+    pageX *= 2
+    pageY -= window.innerHeight / 2
+    pageY /= window.innerHeight
+    pageY *= 2
+    latEase.add(3 * pageY)
+    lonEase.add(6 * pageX)
+  })
+
   const setupCamera = regl({
     context: {
       projection: ({ viewportWidth, viewportHeight }) => {
@@ -76,12 +107,15 @@ const REGL = el => {
         return projectionMat
       },
 
-      deviceAcceleration: () => deviceAcceleration,
-      eyeMatrix: () => eyeMatrix,
-
       tick: ({ tick }) => tick,
 
-      view: viewMatrix,
+      view: () =>
+        mat4.lookAt(
+          viewMatrix,
+          eyeMatrix,
+          [0, 0, -REGL_CONST.MAX_Z],
+          [0, 1, 0]
+        ),
     },
   })
 
@@ -95,6 +129,10 @@ const REGL = el => {
       regl.clear({
         color: [0, 0, 0, 1],
       })
+      latEase.update()
+      lonEase.update()
+
+      polarToVector3(lonEase.value, latEase.value, REGL_CONST.MAX_Z_HALF , eyeMatrix)
 
       reglGeometryActions.update()
 
@@ -163,6 +201,7 @@ const REGL = el => {
   }
   const outputC = [Math.random(), Math.random(), Math.random()]
   window.addEventListener("mouseup", e => {
+
     var projView = mat4.multiply([], projectionMat, viewMatrix)
     var invProjView = mat4.invert([], projView)
 

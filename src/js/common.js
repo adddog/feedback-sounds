@@ -22,10 +22,12 @@ export const STATE = observable({
 })
 
 let _aspect = window.innerWidth / window.innerHeight
+const MAX_Z = 40
 export const REGL_CONST = {
   MAX_X: 40 * _aspect,
   MAX_Y: 40,
-  MAX_Z: 40,
+  MAX_Z: MAX_Z,
+  MAX_Z_HALF: MAX_Z / 2,
   AMBIENT_LIGHT: 0.7,
   DIFFUSE_LIGHT: 0.5,
   STATIC_SCALE: 0.4,
