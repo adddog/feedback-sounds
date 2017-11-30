@@ -8,8 +8,14 @@ import Music from "./music"
 import request from "xhr-request"
 
 const Sequencer = () => {
-  function start(regl, audioPath) {
-    return request(
+  function start(regl, cb, audioPath) {
+    if(!regl){
+      throw new Error(`Supply a regl`)
+    }
+    if(!cb){
+      throw new Error(`No callback supplied`)
+    }
+    request(
       audioPath || "audio.json",
       {
         json: true,
@@ -40,7 +46,7 @@ const Sequencer = () => {
         const regl = Regl(regl || document.querySelector(".app"))
         const music = Music()
 
-        return regl
+        cb(regl)
       }
     )
   }
