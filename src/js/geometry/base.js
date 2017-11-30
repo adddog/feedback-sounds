@@ -21,9 +21,11 @@ export const reglGeo = (regl, geo) => {
       projection: regl.context("projection"),
       ambientLightAmount: regl.prop("ambientLightAmount"),
       diffuseLightAmount: regl.prop("diffuseLightAmount"),
+      scaleAmount: regl.prop("scaleAmount"),
       color: regl.prop("color"),
       texture: regl.prop("texture"),
       tick: regl.context("tick"),
+      randomSpeed: regl.this("_randomSpeed"),
       rotationAxis: [
         Math.round(Math.random()),
         Math.round(Math.random()),
@@ -45,7 +47,7 @@ export const reglGeo = (regl, geo) => {
 export class BaseMesh {
   constructor(geo, props = {}) {
     this.framesRendered = 0
-
+    this._randomSpeed = Math.random() * .8 + 0.2
     this.uuid = props.uuid || v4()
     this._normals = normals(geo.cells, geo.positions)
     this.modelMatrix = mat4.create()

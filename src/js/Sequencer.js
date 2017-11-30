@@ -1,21 +1,25 @@
+import Tone from "tone"
 import Regl from "./regljs"
 import { cover, contain } from "intrinsic-scale"
 import { keys, values } from "lodash"
-import { SAMPLE_TYPES, STATE } from "./common"
+import { SAMPLE_TYPES, STATE, IS_DEV } from "./common"
 import observable from "proxy-observable"
 import pathParse from "path-parse"
 import Music from "./music"
 import request from "xhr-request"
 
 const Sequencer = () => {
-  function start(regl, cb, audioPath, containerEl) {
-    if (!regl || !cb || !audioPath || !containerEl) {
-      throw new Error(`Supply arguments: regl, cb, audioPath, containerEl.
+  function start(regl, cb, audioPath, containerEl, options = {}) {
+    if (!IS_DEV) {
+      if (!regl || !cb || !audioPath || !containerEl) {
+        throw new Error(`Supply arguments: regl, cb, audioPath, containerEl.
         audioPath should be in the format of audio.json
         `)
+      }
     }
+
     request(
-      audioPath,
+      audioPath || "audio.json",
       {
         json: true,
       },
@@ -41,13 +45,23 @@ const Sequencer = () => {
           })
         })
 
+        for (let key in options) {
+          STATE[key] = options[key]
+        }
+
         console.log("LOADED SOUNDS")
         console.log(STATE.files)
 
-        const regl = Regl(regl || document.querySelector(".app"))
+        const reglAudio = Regl(
+          IS_DEV
+            ? document.querySelector(".app")
+            : regl
+        )
         const music = Music()
 
-        cb(regl)
+        if(!IS_DEV){
+          cb({ visual: reglAudio, state: STATE, music, Tone })
+        }
       }
     )
   }

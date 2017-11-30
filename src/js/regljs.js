@@ -4,7 +4,7 @@ import { mat4, vec3 } from "gl-matrix"
 import { assign, compact, values, sample } from "lodash"
 import EaseNumber from "./ease-number"
 import Emitter from "./emitter"
-import { SAMPLE_TYPES, STATE, REGL_CONST, getColor } from "./common"
+import { SAMPLE_TYPES, STATE, REGL_CONST, getColor,IS_DEV } from "./common"
 import Geometry from "./geometry"
 import ReglGeometryActions from "./regl-actions"
 import { cover } from "intrinsic-scale"
@@ -15,14 +15,19 @@ var intersect = require("ray-sphere-intersection")
 import SDFs from "common/sdfs"*/
 
 const REGL = el => {
+
   let regl
-  if (el instanceof HTMLElement) {
+  if (IS_DEV) {
+    console.warn("STARTED FEEDBACK SOUNDS WITH NEW REGL")
     regl = Regl({
       container: el,
     })
   } else {
+    console.warn("STARTED FEEDBACK SOUNDS WITH EXISTING REGL")
     regl = el
   }
+
+  console.warn(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
 
   const reglGeometryActions = ReglGeometryActions(regl)
 
@@ -61,6 +66,7 @@ const REGL = el => {
     lonEase.add(6 * pageX)
   })
 */
+  let _updateCounter = 0
   const setupCamera = regl({
     context: {
       projection: ({ viewportWidth, viewportHeight }) => {
@@ -74,7 +80,7 @@ const REGL = el => {
         return projectionMat
       },
 
-      tick: ({ tick }) => tick,
+      tick: ({ tick }) => IS_DEV ? tick : _updateCounter,
 
       view: () =>
         mat4.lookAt(
@@ -106,14 +112,17 @@ const REGL = el => {
 
   function update() {
     drawRegl()
+    _updateCounter++
   }
 
-  regl.frame(function() {
-    regl.clear({
-      color: [0, 0, 0, 1],
+  if (IS_DEV) {
+    regl.frame(function() {
+      regl.clear({
+        color: [0, 0, 0, 1],
+      })
+      drawRegl()
     })
-    drawRegl()
-  })
+  }
 
   const geometries = Geometry(regl)
 
@@ -125,6 +134,9 @@ const REGL = el => {
         },
         diffuseLightAmount: {
           value: REGL_CONST.DIFFUSE_LIGHT,
+        },
+        scaleAmount: {
+          value: REGL_CONST.SCALE,
         },
       },
       props
@@ -184,7 +196,7 @@ const REGL = el => {
     const staticObjects = reglGeometryActions.getObjectsAndPositions(
       "static"
     )
-    const RADIUS = 1.2
+    const RADIUS = 1.45
     const staticHits = staticObjects
       .map(({ position }) => position)
       .map(pos =>

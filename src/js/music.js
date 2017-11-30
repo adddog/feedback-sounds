@@ -8,6 +8,7 @@ import {
   REGL_CONST,
   STATE,
   colors,
+  IS_DEV,
   brightestColor,
 } from "./common"
 import Emitter from "./emitter"
@@ -59,11 +60,17 @@ function Music() {
           REGL_CONST.AMBIENT_LIGHT
         soundObj.meshProps.ambientLightAmount.value =
           REGL_CONST.DIFFUSE_LIGHT
+        soundObj.meshProps.scaleAmount.value = REGL_CONST.SCALE
       })
 
       SEQUENCE_DATA[_currentIndex].sampleKeys.forEach(soundObj => {
         soundObj.meshProps.ambientLightAmount.value = 1
         soundObj.meshProps.diffuseLightAmount.value = 1
+        soundObj.meshProps.scaleAmount.value =
+          1 +
+          1 *
+            Math.abs(soundObj.meshProps.position[2]) /
+            REGL_CONST.MAX_Z
         let vel = Math.random() * 0.2 + 0.2
         player.get(soundObj.sampleKey).start(time, 0, "32n", 0, vel)
       })
@@ -95,7 +102,7 @@ function Music() {
       let _tmp = sequenceData.sampleKeys.filter(
         soundObj => soundObj.meshProps.uuid !== uuid
       )
-      if(_tmp.length !== sequenceData.sampleKeys.length){
+      if (_tmp.length !== sequenceData.sampleKeys.length) {
         sequenceData.sampleKeys = _tmp
         setColorByIndex(i, -1)
       }
@@ -124,7 +131,15 @@ function Music() {
       .hsl()
       .string())
 
-  const container = STATE.containerEl || document.querySelector(".sequencer")
+  let container
+  if (!IS_DEV) {
+    container = document.createElement("div")
+    container.classList.add("sequencer")
+    STATE.containerEl.appendChild(container)
+  } else {
+    container = document.querySelector(".sequencer")
+    document.body.appendChild(container)
+  }
   SEQUENCE_STEPS_ARR.forEach((step, i) => {
     const el = document.createElement("div")
     el.classList.add("sequencer-step")

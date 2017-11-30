@@ -5,6 +5,8 @@ import { sample } from "lodash"
 import Colors from "nice-color-palettes"
 import observable from "proxy-observable"
 
+export const IS_DEV = process.env.NODE_ENV==="development"
+
 export const SEQUENCE_LENGTH = 32
 export const getColor = () => sample(Colors)
 export const colors = getColor()
@@ -30,6 +32,7 @@ export const REGL_CONST = {
   MAX_Z_HALF: MAX_Z / 2,
   AMBIENT_LIGHT: 0.7,
   DIFFUSE_LIGHT: 0.5,
+  SCALE: 1,
   STATIC_SCALE: 0.4,
 }
 window.addEventListener(

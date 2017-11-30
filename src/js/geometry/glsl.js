@@ -1,4 +1,3 @@
-
 export const VERT = `
     precision lowp float;
     uniform mat4 projection, view, model;
@@ -8,12 +7,14 @@ export const VERT = `
 
     uniform vec3 rotationAxis;
     uniform float tick;
+    uniform float randomSpeed;
     uniform sampler2D texture;
 
     uniform vec3 lightDir;
     uniform vec3 color;
     uniform float ambientLightAmount;
     uniform float diffuseLightAmount;
+    uniform float scaleAmount;
 
     varying vec3 vColor;
     varying vec2 vTextureCoord;
@@ -57,12 +58,22 @@ export const VERT = `
       vTextureCoord           = uvs;
       vec3 pos = position;
       vec3 norm = normal;
-      pos = rotateX(tick * rotationAxis.x * DEG_TO_RAD) * pos;
-      pos = rotateY(tick * rotationAxis.y * DEG_TO_RAD) * pos;
-      pos = rotateZ(tick * rotationAxis.z * DEG_TO_RAD) * pos;
-      norm = rotateX(tick * rotationAxis.x * DEG_TO_RAD) * norm;
-      norm = rotateY(tick * rotationAxis.y * DEG_TO_RAD) * norm;
-      norm = rotateZ(tick * rotationAxis.z * DEG_TO_RAD) * norm;
+      pos *= scaleAmount;
+      norm *= scaleAmount;
+
+      float xRad = tick * randomSpeed * rotationAxis.x * DEG_TO_RAD;
+      float yRad = tick * randomSpeed * rotationAxis.y * DEG_TO_RAD;
+      float zRad = tick * randomSpeed * rotationAxis.z * DEG_TO_RAD;
+
+      pos += vec3(cos(xRad) * model[3][2] * 0.2  ,sin(xRad) * model[3][2] *0.2 ,0.) * 0.5;
+
+      pos = rotateX(xRad) * pos;
+      pos = rotateY(yRad) * pos;
+      pos = rotateZ(zRad) * pos;
+      norm = rotateX(xRad) * norm;
+      norm = rotateY(yRad) * norm;
+      norm = rotateZ(zRad) * norm;
+
       vPosition = pos;
       vNormal = norm;
       vec4 pixelate = texture2D( texture, vTextureCoord );

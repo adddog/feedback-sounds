@@ -22,13 +22,26 @@ const ReglGeometryActions = regl => {
   let _desinationIndex = 0
 
   function update() {
+    const MIN_Z = -REGL_CONST.MAX_Z * 0.6
     for (let j = _ACTIONS.static.length - 1; j >= 0; j--) {
       let meshObj = _ACTIONS.static[j]
       meshObj.geo.framesRendered++
+      if (meshObj.geo.modelMatrix[14] > MIN_Z) {
+        mat4.translate(
+          meshObj.geo.modelMatrix,
+          meshObj.geo.modelMatrix,
+          [
+            0,
+            0,
+            -meshObj.increment.z,
+          ]
+        )
+      }
       meshObj.geo.draw({
         texture: meshObj.texture,
         ambientLightAmount: meshObj.props.ambientLightAmount.value,
         diffuseLightAmount: meshObj.props.diffuseLightAmount.value,
+        scaleAmount: meshObj.props.scaleAmount.value,
         color: meshObj.props.color.value,
       })
     }
@@ -47,6 +60,7 @@ const ReglGeometryActions = regl => {
       meshObj.geo.draw({
         texture: meshObj.texture,
         diffuseLightAmount: meshObj.props.diffuseLightAmount.value,
+        scaleAmount: meshObj.props.scaleAmount.value,
         ambientLightAmount: meshObj.props.ambientLightAmount.value,
         color: meshObj.props.color.value,
       })
