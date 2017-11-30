@@ -8,20 +8,21 @@ import Music from "./music"
 import request from "xhr-request"
 
 const Sequencer = () => {
-  function start(regl, cb, audioPath) {
-    if(!regl){
-      throw new Error(`Supply a regl`)
-    }
-    if(!cb){
-      throw new Error(`No callback supplied`)
+  function start(regl, cb, audioPath, containerEl) {
+    if (!regl || !cb || !audioPath || !containerEl) {
+      throw new Error(`Supply arguments: regl, cb, audioPath, containerEl.
+        audioPath should be in the format of audio.json
+        `)
     }
     request(
-      audioPath || "audio.json",
+      audioPath,
       {
         json: true,
       },
       (err, data) => {
         if (err) throw err
+
+        STATE.containerEl = containerEl
 
         const files = data.files.split("\n")
         keys(SAMPLE_TYPES).forEach(type => (STATE.files[type] = []))

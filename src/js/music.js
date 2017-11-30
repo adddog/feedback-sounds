@@ -124,7 +124,7 @@ function Music() {
       .hsl()
       .string())
 
-  const container = document.querySelector(".sequencer")
+  const container = STATE.containerEl || document.querySelector(".sequencer")
   SEQUENCE_STEPS_ARR.forEach((step, i) => {
     const el = document.createElement("div")
     el.classList.add("sequencer-step")
