@@ -15,9 +15,14 @@ var intersect = require("ray-sphere-intersection")
 import SDFs from "common/sdfs"*/
 
 const REGL = el => {
-  const regl = Regl({
-    container: el,
-  })
+  let regl
+  if (el instanceof HTMLElement) {
+    regl = Regl({
+      container: el,
+    })
+  } else {
+    regl = el
+  }
   const reglGeometryActions = ReglGeometryActions(regl)
 
   const drawFeedback = regl({
@@ -61,7 +66,7 @@ const REGL = el => {
 
   const EYE = [0, 0, 1]
   let projectionMat = mat4.create()
-const degToRad = degrees => degrees * (Math.PI / 180)
+  const degToRad = degrees => degrees * (Math.PI / 180)
 
   function polarToVector3(lon, lat, radius, vector) {
     const phi = degToRad(1.5 - lat)
@@ -82,7 +87,7 @@ const degToRad = degrees => degrees * (Math.PI / 180)
   const latEase = new EaseNumber(0, 0.001)
   const lonEase = new EaseNumber(0, 0.001)
 
-  window.addEventListener("mousemove", e => {
+  /*  window.addEventListener("mousemove", e => {
     let { pageX, pageY } = e
     pageX -= window.innerWidth / 2
     pageX /= window.innerWidth
@@ -93,7 +98,7 @@ const degToRad = degrees => degrees * (Math.PI / 180)
     latEase.add(3 * pageY)
     lonEase.add(6 * pageX)
   })
-
+*/
   const setupCamera = regl({
     context: {
       projection: ({ viewportWidth, viewportHeight }) => {
@@ -129,10 +134,11 @@ const degToRad = degrees => degrees * (Math.PI / 180)
       regl.clear({
         color: [0, 0, 0, 1],
       })
+
       latEase.update()
       lonEase.update()
 
-      polarToVector3(lonEase.value, latEase.value, REGL_CONST.MAX_Z_HALF , eyeMatrix)
+      //polarToVector3(lonEase.value, latEase.value, REGL_CONST.MAX_Z_HALF , eyeMatrix)
 
       reglGeometryActions.update()
 
@@ -201,7 +207,6 @@ const degToRad = degrees => degrees * (Math.PI / 180)
   }
   const outputC = [Math.random(), Math.random(), Math.random()]
   window.addEventListener("mouseup", e => {
-
     var projView = mat4.multiply([], projectionMat, viewMatrix)
     var invProjView = mat4.invert([], projView)
 
