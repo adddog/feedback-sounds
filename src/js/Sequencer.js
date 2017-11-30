@@ -8,14 +8,15 @@ import Music from "./music"
 import request from "xhr-request"
 
 const Sequencer = () => {
-  function start(regl) {
-    request(
-      "audio.json",
+  function start(regl, audioPath) {
+    return request(
+      audioPath || "audio.json",
       {
         json: true,
       },
-      function(err, data) {
+      (err, data) => {
         if (err) throw err
+
         const files = data.files.split("\n")
         keys(SAMPLE_TYPES).forEach(type => (STATE.files[type] = []))
         files.forEach(path => {
@@ -38,6 +39,8 @@ const Sequencer = () => {
 
         const regl = Regl(regl || document.querySelector(".app"))
         const music = Music()
+
+        return regl
       }
     )
   }

@@ -23,46 +23,8 @@ const REGL = el => {
   } else {
     regl = el
   }
+
   const reglGeometryActions = ReglGeometryActions(regl)
-
-  const drawFeedback = regl({
-    frag: `
-
-    #define PI 3.14159265359;
-    #define TAU 6.28318530718;
-    #define MOIRE 100.;
-    #define amount 8.0;
-
-  precision lowp float;
-  varying vec2 uv;
-
-  void main () {
-    vec2 st = uv;
-
-    gl_FragColor = vec4(vec3(1,1,1),1.);
-  }`,
-
-    vert: `
-  precision lowp float;
-  attribute vec2 position;
-  varying vec2 uv;
-  void main () {
-    uv = position;
-    gl_Position = vec4(2.0 * position - 1.0, 0, 1);
-  }`,
-
-    attributes: {
-      position: [-2, 0, 0, -2, 2, 2],
-    },
-
-    uniforms: {
-      aspect: ({ viewportHeight, viewportWidth }) =>
-        viewportWidth / viewportHeight,
-      t: ({ tick }) => tick * 0.01,
-    },
-
-    count: 3,
-  })
 
   const EYE = [0, 0, 1]
   let projectionMat = mat4.create()
@@ -131,10 +93,6 @@ const REGL = el => {
   const drawRegl = () => {
     if (!_allowRender) return
     setupCamera(() => {
-      regl.clear({
-        color: [0, 0, 0, 1],
-      })
-
       latEase.update()
       lonEase.update()
 
@@ -151,6 +109,9 @@ const REGL = el => {
   }
 
   regl.frame(function() {
+    regl.clear({
+      color: [0, 0, 0, 1],
+    })
     drawRegl()
   })
 
@@ -276,6 +237,7 @@ const REGL = el => {
   })
 
   return {
+    update,
     destroy,
   }
 }
