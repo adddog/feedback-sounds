@@ -133,11 +133,9 @@ function Music() {
     const files = STATE.files[type]
     const sampleKey = `${type}:${random(files.length - 1)}`
     if (_selectedIndexs.length) {
-      console.log(_selectedIndexs)
       _selectedIndexs.forEach(i => {
         addToSequence(SEQUENCE_DATA[i], props, sampleKey)
         setColorByIndex(i)
-        console.log(SEQUENCE_DATA[i].el)
         setClassOnStep(SEQUENCE_DATA[i].el, false)
       })
     } else {
