@@ -8,13 +8,14 @@ export const VERT = `
     uniform vec3 rotationAxis;
     uniform float tick;
     uniform float randomSpeed;
-    uniform sampler2D texture;
+    //uniform sampler2D texture;
 
     uniform vec3 lightDir;
     uniform vec3 color;
     uniform float ambientLightAmount;
     uniform float diffuseLightAmount;
     uniform float scaleAmount;
+    uniform float positionAmount;
 
     varying vec3 vColor;
     varying vec2 vTextureCoord;
@@ -65,7 +66,9 @@ export const VERT = `
       float yRad = tick * randomSpeed * rotationAxis.y * DEG_TO_RAD;
       float zRad = tick * randomSpeed * rotationAxis.z * DEG_TO_RAD;
 
-      pos += vec3(cos(xRad) * model[3][2] * 0.2  ,sin(xRad) * model[3][2] *0.2 ,0.) * 0.5;
+      pos += vec3(cos(xRad) * model[3][2] * positionAmount ,
+        sin(xRad) * model[3][2] * positionAmount ,
+        0.);
 
       pos = rotateX(xRad) * pos;
       pos = rotateY(yRad) * pos;
@@ -76,13 +79,13 @@ export const VERT = `
 
       vPosition = pos;
       vNormal = norm;
-      vec4 pixelate = texture2D( texture, vTextureCoord );
-      pos.xyz += norm * (length(pixelate.rgb) * 1.);
+      //vec4 pixelate = texture2D( texture, vTextureCoord );
+      //pos.xyz += norm * (length(pixelate.rgb) * 1.);
 
       vec3 ambient = ambientLightAmount * color;
       float cosTheta = dot(vNormal, lightDir);
       vec3 diffuse = diffuseLightAmount * color * clamp(cosTheta , 0., 1.0 );
-      vColor = ( pixelate.rgb+(vNormal)/2. - 0.4 ) + ambient + diffuse;
+      vColor = ( (vNormal)/2. - 0.4 ) + ambient + diffuse;
       //vColor = vec3(am)
 
       gl_Position = projection * view * model * vec4(pos, 1);

@@ -42,14 +42,20 @@ function Music() {
     .map((v, i) => i)
 
   let _currentIndex,
+    _selectedIndexs = [],
     _currentTime,
     _previousIndex = 0
   var loop = new Tone.Sequence(
     function(time, col) {
       _currentIndex = col
 
-      SEQUENCE_DATA[_previousIndex].el.classList.remove("active")
-      SEQUENCE_DATA[_currentIndex].el.classList.add("active")
+      if (
+        _selectedIndexs.indexOf(_currentIndex) < 0 &&
+        _selectedIndexs.indexOf(_previousIndex) < 0
+      ) {
+        setClassOnStep(SEQUENCE_DATA[_previousIndex].el, false)
+        setClassOnStep(SEQUENCE_DATA[_currentIndex].el, true)
+      }
 
       if (_currentIndex === 0 && _currentTime) {
         STATE.sequenceDuration = time - _currentTime
@@ -74,15 +80,6 @@ function Music() {
         let vel = Math.random() * 0.2 + 0.2
         player.get(soundObj.sampleKey).start(time, 0, "32n", 0, vel)
       })
-      /*TYPES.forEach(type => {
-        const layer = UserSeqeunce[type]
-        if (!!layer[col]) {
-          UserSeqeunce[type][col].forEach(soundObj => {
-            let vel = Math.random() * 0.2 + 0.2
-            player.get(soundObj.key).start(time, 0, "32n", 0, vel)
-          })
-        }
-      })*/
 
       _previousIndex = _currentIndex
     },
@@ -109,19 +106,19 @@ function Music() {
     })
   })
 
-  Emitter.on("object:clicked", ({ props, hit }) => {
-    const type = props.shape.value
-    const files = STATE.files[type]
-    const sampleKey = `${type}:${random(files.length - 1)}`
-    console.log(sampleKey, "at", _currentIndex, `with ${props.uuid}`)
+  const setClassOnStep = (el, isActive = false) =>
+    el.classList[isActive ? "add" : "remove"]("active")
 
-    SEQUENCE_DATA[_currentIndex].sampleKeys.push({
+  const addToSequence = (sequnceDataStep, props, sampleKey) => {
+    console.log(
+      `${sampleKey} ${samples[sampleKey]}`,
+      `with ${props.uuid}`
+    )
+    sequnceDataStep.sampleKeys.push({
       meshProps: props,
       sampleKey,
     })
-
-    setColorByIndex(_currentIndex)
-  })
+  }
 
   const setColorByIndex = (index, dir = 1) =>
     (SEQUENCE_DATA[index].el.style.backgroundColor = SEQUENCE_DATA[
@@ -130,6 +127,25 @@ function Music() {
       .darken(0.25 * dir * SEQUENCE_DATA[index].sampleKeys.length)
       .hsl()
       .string())
+
+  Emitter.on("object:clicked", ({ props, hit }) => {
+    const type = props.shape.value
+    const files = STATE.files[type]
+    const sampleKey = `${type}:${random(files.length - 1)}`
+    if (_selectedIndexs.length) {
+      console.log(_selectedIndexs)
+      _selectedIndexs.forEach(i => {
+        addToSequence(SEQUENCE_DATA[i], props, sampleKey)
+        setColorByIndex(i)
+        console.log(SEQUENCE_DATA[i].el)
+        setClassOnStep(SEQUENCE_DATA[i].el, false)
+      })
+    } else {
+      addToSequence(SEQUENCE_DATA[_currentIndex], props, sampleKey)
+      setColorByIndex(_currentIndex)
+    }
+    _selectedIndexs.length = 0
+  })
 
   let container
   if (!IS_DEV) {
@@ -142,7 +158,19 @@ function Music() {
   }
   SEQUENCE_STEPS_ARR.forEach((step, i) => {
     const el = document.createElement("div")
+    el.setAttribute("data-index", i)
     el.classList.add("sequencer-step")
+    el.addEventListener("click", e => {
+      const index = parseInt(e.currentTarget.dataset.index, 10)
+      let iOf = _selectedIndexs.indexOf(index)
+      if (iOf < 0) {
+        _selectedIndexs.push(index)
+        setClassOnStep(e.currentTarget, true)
+      } else {
+        _selectedIndexs.splice(iOf, 1)
+        setClassOnStep(e.currentTarget, false)
+      }
+    })
     container.appendChild(el)
     SEQUENCE_DATA[i].el = el
     setColorByIndex(i)

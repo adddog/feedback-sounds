@@ -1,6 +1,6 @@
 const normals = require("angle-normals")
 import { VERT, FRAG } from "./glsl"
-import { REGL_CONST } from "../common"
+import { REGL_CONST, STATE } from "../common"
 import { mat4 } from "gl-matrix"
 import { v4 } from "uuid"
 
@@ -22,8 +22,9 @@ export const reglGeo = (regl, geo) => {
       ambientLightAmount: regl.prop("ambientLightAmount"),
       diffuseLightAmount: regl.prop("diffuseLightAmount"),
       scaleAmount: regl.prop("scaleAmount"),
+      positionAmount: regl.prop("positionAmount"),
       color: regl.prop("color"),
-      texture: regl.prop("texture"),
+      //texture: regl.prop("texture"),
       tick: regl.context("tick"),
       randomSpeed: regl.this("_randomSpeed"),
       rotationAxis: [
@@ -47,7 +48,7 @@ export const reglGeo = (regl, geo) => {
 export class BaseMesh {
   constructor(geo, props = {}) {
     this.framesRendered = 0
-    this._randomSpeed = Math.random() * .8 + 0.2
+    this._randomSpeed = Math.random() * 0.8 + 0.2
     this.uuid = props.uuid || v4()
     this._normals = normals(geo.cells, geo.positions)
     this.modelMatrix = mat4.create()
@@ -69,5 +70,9 @@ export class BaseMesh {
         -REGL_CONST.MAX_Z,
       ])
     }
+  }
+
+  canInteract() {
+    return this.framesRendered > STATE.fps * 2
   }
 }

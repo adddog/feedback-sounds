@@ -32,8 +32,9 @@ export const REGL_CONST = {
   MAX_Z_HALF: MAX_Z / 2,
   AMBIENT_LIGHT: 0.7,
   DIFFUSE_LIGHT: 0.5,
+  POSITION_AMOUNT: 0.1,
   SCALE: 1,
-  STATIC_SCALE: 0.4,
+  STATIC_SCALE: 0.5,
 }
 window.addEventListener(
   "resize",

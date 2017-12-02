@@ -21,12 +21,22 @@ const ReglGeometryActions = regl => {
 
   let _desinationIndex = 0
 
+  const draw = meshObj =>
+    meshObj.geo.draw({
+      texture: meshObj.texture,
+      diffuseLightAmount: meshObj.props.diffuseLightAmount.value,
+      positionAmount: meshObj.props.positionAmount.value,
+      scaleAmount: meshObj.props.scaleAmount.value,
+      ambientLightAmount: meshObj.props.ambientLightAmount.value,
+      color: meshObj.props.color.value,
+    })
+
   function update() {
-    const MIN_Z = -REGL_CONST.MAX_Z * 0.6
+    //const MIN_Z = -REGL_CONST.MAX_Z * 0.75
     for (let j = _ACTIONS.static.length - 1; j >= 0; j--) {
       let meshObj = _ACTIONS.static[j]
       meshObj.geo.framesRendered++
-      if (meshObj.geo.modelMatrix[14] > MIN_Z) {
+      /*if (meshObj.geo.modelMatrix[14] > MIN_Z) {
         mat4.translate(
           meshObj.geo.modelMatrix,
           meshObj.geo.modelMatrix,
@@ -36,14 +46,8 @@ const ReglGeometryActions = regl => {
             -meshObj.increment.z,
           ]
         )
-      }
-      meshObj.geo.draw({
-        texture: meshObj.texture,
-        ambientLightAmount: meshObj.props.ambientLightAmount.value,
-        diffuseLightAmount: meshObj.props.diffuseLightAmount.value,
-        scaleAmount: meshObj.props.scaleAmount.value,
-        color: meshObj.props.color.value,
-      })
+      }*/
+      draw(meshObj)
     }
     for (let i = _ACTIONS.fly.length - 1; i >= 0; i--) {
       let meshObj = _ACTIONS.fly[i]
@@ -57,13 +61,7 @@ const ReglGeometryActions = regl => {
           meshObj.increment.z,
         ]
       )
-      meshObj.geo.draw({
-        texture: meshObj.texture,
-        diffuseLightAmount: meshObj.props.diffuseLightAmount.value,
-        scaleAmount: meshObj.props.scaleAmount.value,
-        ambientLightAmount: meshObj.props.ambientLightAmount.value,
-        color: meshObj.props.color.value,
-      })
+      draw(meshObj)
       if (meshObj.geo.modelMatrix[14] > 0) {
         Emitter.emit("object:finished", meshObj.props.shape)
         removeAt(i)
@@ -138,7 +136,7 @@ const ReglGeometryActions = regl => {
         geo,
         increment,
         texture: imageTexture,
-        props
+        props,
       })
       _desinationIndex = (_desinationIndex + 1) % DESINATIONS.length
     })
@@ -146,6 +144,7 @@ const ReglGeometryActions = regl => {
 
   function getObjectsAndPositions(type = "fly") {
     return _ACTIONS[type].map(obj => ({
+      mesh: obj.geo,
       uuid: obj.geo.uuid,
       framesRendered: obj.geo.framesRendered,
       position: mat4.getTranslation(

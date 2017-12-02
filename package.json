@@ -89,7 +89,7 @@
     },
     "scripts": {
         "start": "NODE_ENV=development ejs-cli src/index.ejs > index.html && concurrently \"NODE_ENV=development budo index.js:bundle.js --host 0.0.0.0 --ssl -C sslcerts/local_cert.pem -K sslcerts/local_key.pem --cors --live --serve bundle.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css -m -w\"",
-        "build": "concurrently \"NODE_ENV=production browserify src/js/Sequencer.js | uglifyjs > feedback-sounds.bundle.min.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css && cssnano < feedback-sounds.css > feedback-sounds.min.css && NODE_ENV=production ejs-cli src/index.ejs > index.html\" "
+        "build": "concurrently \"NODE_ENV=production browserify src/js/Sequencer.js | uglifyjs > feedback-sounds.bundle.min.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css && cssnano < feedback-sounds.css > feedback-sounds.min.css && NODE_ENV=production ejs-cli src/index.ejs > index.html\" && cp feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js"
     },
     "browserify": {
         "transform": [

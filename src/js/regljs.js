@@ -3,8 +3,15 @@ import { v4 } from "uuid"
 import { mat4, vec3 } from "gl-matrix"
 import { assign, compact, values, sample } from "lodash"
 import EaseNumber from "./ease-number"
+import Mouse from "./mouse"
 import Emitter from "./emitter"
-import { SAMPLE_TYPES, STATE, REGL_CONST, getColor,IS_DEV } from "./common"
+import {
+  SAMPLE_TYPES,
+  STATE,
+  REGL_CONST,
+  getColor,
+  IS_DEV,
+} from "./common"
 import Geometry from "./geometry"
 import ReglGeometryActions from "./regl-actions"
 import { cover } from "intrinsic-scale"
@@ -15,7 +22,6 @@ var intersect = require("ray-sphere-intersection")
 import SDFs from "common/sdfs"*/
 
 const REGL = el => {
-
   let regl
   if (IS_DEV) {
     console.warn("STARTED FEEDBACK SOUNDS WITH NEW REGL")
@@ -27,7 +33,7 @@ const REGL = el => {
     regl = el
   }
 
-  console.warn(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
+  console.warn(`process.env.NODE_ENV: ${process.env.NODE_ENV}`)
 
   const reglGeometryActions = ReglGeometryActions(regl)
 
@@ -80,7 +86,7 @@ const REGL = el => {
         return projectionMat
       },
 
-      tick: ({ tick }) => IS_DEV ? tick : _updateCounter,
+      tick: ({ tick }) => (IS_DEV ? tick : _updateCounter),
 
       view: () =>
         mat4.lookAt(
@@ -138,12 +144,15 @@ const REGL = el => {
         scaleAmount: {
           value: REGL_CONST.SCALE,
         },
+        positionAmount: {
+          value: 0,
+        },
       },
       props
     )
 
-  function createGeometry(soundData, type = "fly", props) {
-    props = props || _defaultGeoprops()
+  function createGeometry(soundData, type = "fly", props = {}) {
+    props = _defaultGeoprops(props)
     soundData = soundData || { ...sample(values(SAMPLE_TYPES)) }
     assign(props, {
       color: {
@@ -160,7 +169,6 @@ const REGL = el => {
   }
 
   function destroy() {
-    console.log("destroy")
     regl.destroy()
   }
 
@@ -174,46 +182,59 @@ const REGL = el => {
 
   createGeometry()
 
-  var ray = {
+  const ray = {
     ro: [0, 0, 0],
     rd: [0, 0, 0],
   }
-  const outputC = [Math.random(), Math.random(), Math.random()]
-  window.addEventListener("mouseup", e => {
-    var projView = mat4.multiply([], projectionMat, viewMatrix)
-    var invProjView = mat4.invert([], projView)
 
-    var screenHeight = window.innerHeight
-    var screenWidth = window.innerWidth
-    var mouse = [e.pageX, e.pageY]
-    var viewport = [0, 0, screenWidth, screenHeight]
+  const setPickRay = e => {
+    const projView = mat4.multiply([], projectionMat, viewMatrix)
+    const invProjView = mat4.invert([], projView)
+
+    const screenHeight = window.innerHeight
+    const screenWidth = window.innerWidth
+    const mouse = [e.pageX, e.pageY]
+    const viewport = [0, 0, screenWidth, screenHeight]
 
     pick(ray.ro, ray.rd, mouse, viewport, invProjView)
+  }
 
-    const flyObjects = reglGeometryActions.getObjectsAndPositions()
-    const positions = flyObjects.map(({ position }) => position)
+  const RADIUS = 1.45
+  const getHits = (objects, scale = 1) =>
+    objects
+      .map(({ position }) => position)
+      .map(pos => intersect([], ray.ro, ray.rd, pos, (RADIUS+mouse.getClicks())  * scale))
 
+  const addToSequener = (object, hit, props = {}) =>
+    Emitter.emit("object:clicked", {
+      soundData: object.props.shape,
+      props: _defaultGeoprops({
+        ...object.props,
+        uuid: v4(),
+        position: object.position,
+        positionAmount: {
+          value: REGL_CONST.POSITION_AMOUNT,
+        },
+        ...props,
+      }),
+      hit: hit,
+    })
+
+  const onCheckRay = () => {}
+
+  const mouse = Mouse(IS_DEV ? document.body : el, onCheckRay)
+
+  /*window.addEventListener("dblclick", e => {
+    console.log("dblclick")
+    clearTimeout(_clickTimeout)
+    setPickRay(e)
     const staticObjects = reglGeometryActions.getObjectsAndPositions(
       "static"
     )
-    const RADIUS = 1.45
-    const staticHits = staticObjects
-      .map(({ position }) => position)
-      .map(pos =>
-        intersect(
-          [],
-          ray.ro,
-          ray.rd,
-          pos,
-          RADIUS * REGL_CONST.STATIC_SCALE
-        )
-      )
+    const staticHits = getHits(staticObjects)
     let i = 0
     for (i = 0; i < staticHits.length; i++) {
-      if (
-        staticHits[i] &&
-        staticObjects[i].framesRendered > STATE.fps * 2
-      ) {
+      if (staticHits[i] && staticObjects[i].mesh.canInteract()) {
         Emitter.emit(
           "object:removed",
           reglGeometryActions.removeAt(i, "static")
@@ -221,11 +242,40 @@ const REGL = el => {
         break
       }
     }
-
-    const flyHits = positions.map(pos =>
-      intersect([], ray.ro, ray.rd, pos, RADIUS)
+  })
+*/
+  window.addEventListener("click", e => {
+    setPickRay(e)
+    const flyObjects = reglGeometryActions.getObjectsAndPositions()
+    const staticObjects = reglGeometryActions.getObjectsAndPositions(
+      "static"
     )
+    const flyHits = getHits(flyObjects, 1)
+    const staticHits = getHits(staticObjects, REGL_CONST.STATIC_SCALE)
+
+    let i = 0
+    for (i = 0; i < staticHits.length; i++) {
+      if (staticHits[i] && staticObjects[i].mesh.canInteract()) {
+        if (mouse.isStill()) {
+          Emitter.emit(
+            "object:removed",
+            reglGeometryActions.removeAt(i, "static")
+          )
+        } else {
+          /*
+          CLONE
+          */
+          addToSequener(staticObjects[i], staticHits[i], {
+            position: staticObjects[i].position.map(
+              value => (value += Math.random() * 0.5 - 0.25)
+            ),
+          })
+        }
+        break
+      }
+    }
     i = 0
+
     for (i; i < flyHits.length; i++) {
       const hit = flyHits[i]
       if (hit) {
@@ -233,15 +283,7 @@ const REGL = el => {
         Create a new object with these settings
         this will be the statis mesh
         */
-        Emitter.emit("object:clicked", {
-          soundData: flyObjects[i].props.shape,
-          props: _defaultGeoprops({
-            ...flyObjects[i].props,
-            uuid: v4(),
-            position: positions[i],
-          }),
-          hit: hit,
-        })
+        addToSequener(flyObjects[i], hit)
 
         break
       }
