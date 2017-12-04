@@ -1,6 +1,6 @@
 const normals = require("angle-normals")
 import { VERT, FRAG } from "./glsl"
-import { REGL_CONST, STATE } from "../common"
+import { REGL_CONST, STATE } from "common/common"
 import { mat4 } from "gl-matrix"
 import { v4 } from "uuid"
 

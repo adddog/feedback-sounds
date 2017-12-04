@@ -93,4 +93,13 @@ export const SAMPLE_TYPES = {
       .darken(Math.random() * 0.3)
       .lighten(Math.random() * 0.3),
   },
+
+  /*keyboard: {
+    value: "keyboard",
+    names: ["cymbal", "ride", "crash"],
+    shape: "arc",
+    color: Color("#E0E024")
+      .darken(Math.random() * 0.3)
+      .lighten(Math.random() * 0.3),
+  },*/
 }

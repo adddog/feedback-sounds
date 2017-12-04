@@ -2,16 +2,16 @@ import Regl from "regl"
 import { v4 } from "uuid"
 import { mat4, vec3 } from "gl-matrix"
 import { assign, compact, values, sample } from "lodash"
-import EaseNumber from "./ease-number"
-import Mouse from "./mouse"
-import Emitter from "./emitter"
+import EaseNumber from "common/ease-number"
+import Mouse from "common/mouse"
+import Emitter from "common/emitter"
 import {
   SAMPLE_TYPES,
   STATE,
   REGL_CONST,
   getColor,
   IS_DEV,
-} from "./common"
+} from "common/common"
 import Geometry from "./geometry"
 import ReglGeometryActions from "./regl-actions"
 import { cover } from "intrinsic-scale"
@@ -104,15 +104,16 @@ const REGL = el => {
 
   const drawRegl = () => {
     if (!_allowRender) return
+
     setupCamera(() => {
-      latEase.update()
-      lonEase.update()
+      //latEase.update()
+      //lonEase.update()
 
       //polarToVector3(lonEase.value, latEase.value, REGL_CONST.MAX_Z_HALF , eyeMatrix)
 
       reglGeometryActions.update()
 
-      //newS.draw({color:[0.39, 0.87, 0.29]})
+      //mouse.draw()
     })
   }
 
@@ -126,7 +127,7 @@ const REGL = el => {
       regl.clear({
         color: [0, 0, 0, 1],
       })
-      drawRegl()
+      //drawRegl()
     })
   }
 
@@ -203,7 +204,15 @@ const REGL = el => {
   const getHits = (objects, scale = 1) =>
     objects
       .map(({ position }) => position)
-      .map(pos => intersect([], ray.ro, ray.rd, pos, (RADIUS+mouse.getClicks())  * scale))
+      .map(pos =>
+        intersect(
+          [],
+          ray.ro,
+          ray.rd,
+          pos,
+          (RADIUS + mouse.getClicks()) * scale
+        )
+      )
 
   const addToSequener = (object, hit, props = {}) =>
     Emitter.emit("object:clicked", {
@@ -220,9 +229,7 @@ const REGL = el => {
       hit: hit,
     })
 
-  const onCheckRay = () => {}
-
-  const mouse = Mouse(IS_DEV ? document.body : el, onCheckRay)
+  const mouse = Mouse(IS_DEV ? document.body : el, regl)
 
   /*window.addEventListener("dblclick", e => {
     console.log("dblclick")
@@ -257,6 +264,7 @@ const REGL = el => {
     for (i = 0; i < staticHits.length; i++) {
       if (staticHits[i] && staticObjects[i].mesh.canInteract()) {
         if (mouse.isStill()) {
+          //mouse.updateMeshPosition(staticHits[i])
           Emitter.emit(
             "object:removed",
             reglGeometryActions.removeAt(i, "static")
@@ -279,6 +287,8 @@ const REGL = el => {
     for (i; i < flyHits.length; i++) {
       const hit = flyHits[i]
       if (hit) {
+        mouse.reset()
+        //mouse.updateMeshPosition(hit)
         /*
         Create a new object with these settings
         this will be the statis mesh
@@ -291,6 +301,7 @@ const REGL = el => {
   })
 
   return {
+    regl,
     update,
     destroy,
   }

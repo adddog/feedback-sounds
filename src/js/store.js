@@ -1,5 +1,9 @@
 import Sequencer from "./Sequencer"
 
+/*
+DEV ONLY
+*/
+
 function store(state, emitter) {
   emitter.on("DOMContentLoaded", function(el) {
 

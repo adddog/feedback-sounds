@@ -1,12 +1,12 @@
 import Tone from "tone"
-import Regl from "./regljs"
-import { cover, contain } from "intrinsic-scale"
-import { keys, values } from "lodash"
-import { SAMPLE_TYPES, STATE, IS_DEV } from "./common"
 import observable from "proxy-observable"
 import pathParse from "path-parse"
-import Music from "./music"
 import request from "xhr-request"
+import { cover, contain } from "intrinsic-scale"
+import { keys, values } from "lodash"
+import { SAMPLE_TYPES, STATE, IS_DEV } from "common/common"
+import Audio from "./audio"
+import Regl from "./regljs"
 
 const Sequencer = () => {
   function start(regl, cb, audioPath, containerEl, options = {}) {
@@ -29,7 +29,9 @@ const Sequencer = () => {
         STATE.containerEl = containerEl
 
         const files = data.files.split("\n")
+        console.log(files)
         keys(SAMPLE_TYPES).forEach(type => (STATE.files[type] = []))
+        console.log(STATE.files)
         files.forEach(path => {
           const type = path.split("/")[1]
           STATE.files[type] = STATE.files[type] || []
@@ -53,14 +55,12 @@ const Sequencer = () => {
         console.log(STATE.files)
 
         const reglAudio = Regl(
-          IS_DEV
-            ? document.querySelector(".app")
-            : regl
+          IS_DEV ? document.querySelector(".app") : regl
         )
-        const music = Music()
+        const audio = Audio(reglAudio.regl)
 
-        if(!IS_DEV){
-          cb({ visual: reglAudio, state: STATE, music, Tone })
+        if (!IS_DEV) {
+          cb({ visual: reglAudio, state: STATE, music: audio, Tone })
         }
       }
     )

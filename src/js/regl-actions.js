@@ -2,8 +2,8 @@ import { mat4, vec3 } from "gl-matrix"
 import { v4 } from "uuid"
 import { random, keys } from "lodash"
 import resl from "resl"
-import Emitter from "./emitter"
-import { SEQUENCE_LENGTH, REGL_CONST, STATE } from "./common"
+import Emitter from "common/emitter"
+import { SEQUENCE_LENGTH, REGL_CONST, STATE } from "common/common"
 
 const TIME = 4
 

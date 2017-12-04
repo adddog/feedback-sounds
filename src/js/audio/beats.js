@@ -1,6 +1,5 @@
 import Color from "color"
 import Tone from "tone"
-import MusicLoop from "./music-loop"
 import { values, keys, sample, random } from "lodash"
 import {
   SEQUENCE_LENGTH,
@@ -10,11 +9,10 @@ import {
   colors,
   IS_DEV,
   brightestColor,
-} from "./common"
-import Emitter from "./emitter"
+} from "common/common"
+import Emitter from "common/emitter"
 
 function Music() {
-  const musicLoop = MusicLoop()
   const samples = {}
   for (let key in STATE.files) {
     const files = STATE.files[key]

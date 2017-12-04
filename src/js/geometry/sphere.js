@@ -15,8 +15,6 @@ const SphereGeometry = regl => {
     }
   }
 
-  console.log(icosphere)
-
   SphereMesh.prototype.draw = regl(reglGeo(regl, icosphere))
 
   function create(props) {
