@@ -24,11 +24,11 @@
 
   <title>Template</title>
   <!-- CSS -->
-  <link href=<%=process.env.NODE_ENV==="production" ? "feedback-sounds.min.css" : "feedback-sounds.css"%>  rel="stylesheet">
+  <link href=<%=process.env.NODE_ENV==="production" ? "build/feedback-sounds.min.css" : "feedback-sounds.css"%>  rel="stylesheet">
 
 </head>
 <body>
 </body>
 
-<script src=<%=process.env.NODE_ENV==="production" ? "feedback-sounds.bundle.min.js" : "bundle.js"%>></script>
+<script src=<%=process.env.NODE_ENV==="production" ? "build/feedback-sounds.bundle.min.js" : "bundle.js"%>></script>
 </html>

@@ -89,8 +89,11 @@
     },
     "scripts": {
         "start": "NODE_ENV=development ejs-cli src/index.ejs > index.html && concurrently \"NODE_ENV=development budo index.js:bundle.js --host 0.0.0.0 --ssl -C sslcerts/local_cert.pem -K sslcerts/local_key.pem --cors --live --serve bundle.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css -m -w\"",
-        "build": "concurrently \"NODE_ENV=production browserify src/js/desktop.js | uglifyjs > feedback-sounds.bundle.min.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css && cssnano < feedback-sounds.css > feedback-sounds.min.css && NODE_ENV=production ejs-cli src/index.ejs > index.html\" && cp feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js",
-        "build:js": "concurrently \"browserify src/js/desktop.js -t [ envify --NODE_ENV production ] -t babelify --presets [ es2015 stage-0 stage-1 stage-2 ] | uglifyjs > bundle.min.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css && cssnano < feedback-sounds.css > feedback-sounds.min.css && NODE_ENV=production ejs-cli src/index.ejs > index.html\" "
+        "build:js": "NODE_ENV=production browserify src/js/desktop.js | uglifyjs > build/feedback-sounds.bundle.min.js && npm run build:copy-files",
+        "build:ejs": "NODE_ENV=production ejs-cli src/index.ejs > index.html",
+        "build:css": "postcss src/postcss/index.sss -o build/feedback-sounds.css && cssnano < build/feedback-sounds.css > build/feedback-sounds.min.css",
+        "build:copy-files":  "cp build/feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js",
+        "build": "concurrently \"npm run build:js \" \"npm run build:css\" \"npm run build:ejs\" "
     },
     "browserify": {
         "transform": [

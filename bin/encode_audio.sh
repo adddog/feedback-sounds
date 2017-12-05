@@ -1,5 +1,5 @@
 #!/bin/bash
-JSON="../audio.json"
+JSON="../build/audio.json"
 find "../audio" -name "*.wav" -print0 | while read -d '' -r file;
 do
     echo "$file"
