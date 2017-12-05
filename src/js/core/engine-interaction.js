@@ -13,6 +13,9 @@ import {
 
 const EngineInteraction = (mouse, projectionMat, viewMatrix) => {
   const ray = {
+    startPosition: vec3.create(),
+    x: 0,
+    y: 0,
     ro: [0, 0, 0],
     rd: [0, 0, 0],
   }
@@ -27,6 +30,9 @@ const EngineInteraction = (mouse, projectionMat, viewMatrix) => {
     const screenWidth = window.innerWidth
     const mouse = [e.pageX, e.pageY]
     const viewport = [0, 0, screenWidth, screenHeight]
+
+    ray.x = e.pageX
+    ray.y = e.pageY
 
     pick(ray.ro, ray.rd, mouse, viewport, invProjView)
   }
@@ -49,15 +55,26 @@ const EngineInteraction = (mouse, projectionMat, viewMatrix) => {
   let _isDown = false
   window.addEventListener("mousedown", e => {
     setPickRay(e)
+
+    vec3.set(
+      ray.startPosition,
+      ray.x / window.innerWidth * 2 - 1,
+      (1 - ray.y / window.innerHeight) * 2 - 1,
+      0
+    )
+
     _isDown = true
     emitter.emit("ray:down", ray)
   })
 
-  window.addEventListener("mouseup", e => {
+  const onup = e => {
     setPickRay(e)
     _isDown = false
     emitter.emit("ray:up", ray)
-  })
+  }
+
+  window.addEventListener("mouseleave", onup)
+  window.addEventListener("mouseup", onup)
 
   window.addEventListener(
     "mousemove",
@@ -66,7 +83,7 @@ const EngineInteraction = (mouse, projectionMat, viewMatrix) => {
       setPickRay(e)
       emitter.emit("ray:move", ray)
     }),
-    150
+    180
   )
 
   window.addEventListener("click", e => {

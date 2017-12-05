@@ -8,6 +8,7 @@ import { mat4, vec3 } from "gl-matrix"
 const MusicGeometry = reglEngine => {
   const { regl } = reglEngine
 
+  const BASE_Z = -2
   const SCALE = 6
   const SAMPLES = 40
   const G_HEIGHT = 2
@@ -16,16 +17,28 @@ const MusicGeometry = reglEngine => {
   class Mesh {
     constructor(geo, props = {}) {
       this.modelMatrix = mat4.create()
-      mat4.translate(this.modelMatrix, this.modelMatrix, [
-        -G_HEIGHT / 2,
-        0,
-        -5,
-      ])
-
+      this._baseTr = vec3.fromValues(-G_HEIGHT / 2, 0, BASE_Z)
+      mat4.translate(this.modelMatrix, this.modelMatrix, this._baseTr)
       this.geo = geo
+      this._tr = vec3.create()
     }
 
-    get position(){
+    updatePosition(vector) {
+      vector[0] *= -1
+      vector[1] *= -1
+      vec3.add(vector, vector, this._startPosition)
+      mat4.fromTranslation(this.modelMatrix, vector)
+    }
+
+    onDown() {
+      this._startPosition = this.position
+    }
+
+    get startPosition(){
+      return this._startPosition
+    }
+
+    get position() {
       return mat4.getTranslation(vec3.create(), this.modelMatrix)
     }
 
