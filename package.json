@@ -93,7 +93,7 @@
         "build:js": "NODE_ENV=production browserify src/js/desktop.js | uglifyjs -c drop_console=true -m > build/feedback-sounds.bundle.min.js && npm run build:copy-files",
         "build:ejs": "NODE_ENV=production ejs-cli src/index.ejs > index.html",
         "build:css": "postcss src/postcss/index.sss -o build/feedback-sounds.css && cssnano < build/feedback-sounds.css > build/feedback-sounds.min.css",
-        "build:copy-files": "cp build/feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js",
+        "build:copy-files": "cp build/feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js && cp build/feedback-sounds.min.css ../feedback-world/assets/feedback-sounds.min.css",
         "build": "concurrently \"npm run build:js \" \"npm run build:css\" \"npm run build:ejs\" "
     },
     "browserify": {

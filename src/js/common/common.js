@@ -40,6 +40,7 @@ export const brightestColor = (colors, exportHex = false) =>
     .map(color => (exportHex ? color.hex() : color))
 
 export const STATE = observable({
+  containerEl : IS_DEV ? document.querySelector(".app") : document.body,
   files: {},
   fps: 60,
   bmp: Tone.Transport.bpm.value,

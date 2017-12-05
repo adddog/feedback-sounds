@@ -1,14 +1,11 @@
-import { IS_DEV } from "common/common"
+import { STATE, IS_DEV } from "common/common"
 import html from "choo/html"
 import Sono from "sono"
 import Beats from "audio/beats/beats"
 import Music from "audio/music/music"
 
 function Audio(reglEngine) {
-  let container = IS_DEV
-    ? document.querySelector(".app")
-    : STATE.container
-  document.body.appendChild(html`
+  STATE.containerEl.appendChild(html`
         <div class="feedback-sequencer">
           <div class="feedback-sequencer--beats"></div>
           <div class="feedback-sequencer--music"></div>
