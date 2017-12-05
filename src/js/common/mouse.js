@@ -1,6 +1,6 @@
 import { mat4 } from "gl-matrix"
 import KeyCode from "keycode-js"
-import { keyboard } from "common/common"
+import { keyboard , IS_DEV} from "common/common"
 
 function Mouse(container, regl) {
   const TIME = 850
@@ -15,7 +15,9 @@ function Mouse(container, regl) {
   el.style.position = "absolute"
   el.style.display = "none"
   el.classList.add("mesh-timer")
-  container.appendChild(el)
+  if(IS_DEV){
+    container.appendChild(el)
+  }
 
   const reset = () => {
     _iCounter = 0

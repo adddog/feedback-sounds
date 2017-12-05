@@ -82,12 +82,11 @@ const BeatEngine = props => {
     Emitter.emit("object:clicked", {
       soundData: object.props.shape,
       props: _defaultGeoprops({
-        ...object.props,
-        uuid: v4(),
         position: object.position,
         positionAmount: {
           value: REGL_CONST.POSITION_AMOUNT,
         },
+        ...object.props,
         ...props,
       }),
       hit: hit,
@@ -107,7 +106,10 @@ const BeatEngine = props => {
     let i = 0
     for (i = 0; i < staticHits.length; i++) {
       if (staticHits[i] && staticObjects[i].mesh.canInteract()) {
-        if (mouse.isStill() || keyboard.isDown(KeyCode.KEY_SHIFT)) {
+        if (
+          engineInteraction.allowRemove() ||
+          keyboard.isDown(KeyCode.KEY_SHIFT)
+        ) {
           //mouse.updateMeshPosition(staticHits[i])
           Emitter.emit(
             "object:removed",
@@ -118,7 +120,7 @@ const BeatEngine = props => {
           CLONE
           */
           addToSequener(staticObjects[i], staticHits[i], {
-            uuid:v4(),
+            uuid: v4(),
             position: staticObjects[i].position.map(
               value => (value += Math.random() * 0.5 - 0.25)
             ),
@@ -138,7 +140,10 @@ const BeatEngine = props => {
         Create a new object with these settings
         this will be the statis mesh
         */
-        addToSequener(flyObjects[i], hit)
+        addToSequener(flyObjects[i], hit, {
+          uuid: flyObjects[i].uuid,
+          props: { ...flyObjects[i].props },
+        })
 
         break
       }

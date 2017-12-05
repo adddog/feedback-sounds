@@ -1,6 +1,7 @@
 const dat = require("dat.gui/build/dat.gui.js")
 import Color from "color"
 import Tone from "tone"
+import Detector from "./detector"
 import Emitter from "./emitter"
 import { noop,sample } from "lodash"
 import Colors from "nice-color-palettes"

@@ -1,4 +1,5 @@
 import { mat4, vec3 } from "gl-matrix"
+import TouchEvents from "core/touch-events"
 import { throttle } from "lodash"
 import pick from "camera-picking-ray"
 import intersect from "ray-sphere-intersection"
@@ -39,6 +40,9 @@ const EngineInteraction = (mouse, projectionMat, viewMatrix) => {
 
   const RADIUS = 1.45
 
+  const allowRemove = () =>
+    mouse.isStill() || touchEvents.tapEvent().type === "doubletap"
+
   const getHits = (objects, scale = 1) =>
     objects
       .map(({ position }) => position)
@@ -67,14 +71,14 @@ const EngineInteraction = (mouse, projectionMat, viewMatrix) => {
     emitter.emit("ray:down", ray)
   })
 
-  const onup = e => {
+  const _onup = e => {
     setPickRay(e)
     _isDown = false
     emitter.emit("ray:up", ray)
   }
 
-  window.addEventListener("mouseleave", onup)
-  window.addEventListener("mouseup", onup)
+  window.addEventListener("mouseleave", _onup)
+  window.addEventListener("mouseup", _onup)
 
   window.addEventListener(
     "mousemove",
@@ -99,7 +103,19 @@ const EngineInteraction = (mouse, projectionMat, viewMatrix) => {
     emitter.off(label, callback)
   }
 
+  const touchEvents = TouchEvents(emitter)
+  touchEvents.on("touch:tap", ev => {
+    setPickRay(ev.srcEvent)
+    console.log(ev)
+  })
+
+  touchEvents.on("touch:doubletap", ev => {
+    setPickRay(ev.srcEvent)
+    emitter.emit("ray:click", ray)
+  })
+
   return {
+    allowRemove,
     getHits,
     on,
     off,

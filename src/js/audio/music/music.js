@@ -89,6 +89,7 @@ function Music(reglEngine) {
   GUI_O.startRecord = () => {
     start()
   }
+
   GUI_O.stopRecord = () => {
     stop()
   }

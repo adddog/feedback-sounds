@@ -62,6 +62,7 @@ export default class Beats extends BaseSequence {
       const type = props.shape.value
       const files = STATE.files[type]
       const sampleKey = `${type}:${random(files.length - 1)}`
+      console.log(`Added Beat mesh : ${props.uuid}`);
       if (this._selectedIndexs.length) {
         this._selectedIndexs.forEach(i => {
           this._addToSequence(this.SEQUENCE_DATA[i], props, sampleKey)
@@ -130,7 +131,9 @@ export default class Beats extends BaseSequence {
     this.SEQUENCE_DATA[
       this._currentIndex
     ].sampleKeys.forEach(soundObj => {
+
       if (!this._isHidden) {
+
         soundObj.props.ambientLightAmount.value = 1
         soundObj.props.diffuseLightAmount.value = 1
         soundObj.props.scaleAmount.value =
