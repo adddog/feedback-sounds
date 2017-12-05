@@ -1,4 +1,5 @@
 import Regl from "regl"
+import KeyCode from "keycode-js"
 import { v4 } from "uuid"
 import { mat4, vec3 } from "gl-matrix"
 import { assign, compact, values, sample } from "lodash"
@@ -9,6 +10,7 @@ import {
   STATE,
   REGL_CONST,
   getColor,
+  keyboard,
   IS_DEV,
 } from "common/common"
 import Geometry from "geometry"
@@ -105,7 +107,7 @@ const BeatEngine = props => {
     let i = 0
     for (i = 0; i < staticHits.length; i++) {
       if (staticHits[i] && staticObjects[i].mesh.canInteract()) {
-        if (mouse.isStill()) {
+        if (mouse.isStill() || keyboard.isDown(KeyCode.KEY_SHIFT)) {
           //mouse.updateMeshPosition(staticHits[i])
           Emitter.emit(
             "object:removed",

@@ -1,10 +1,13 @@
 import { mat4 } from "gl-matrix"
+import KeyCode from "keycode-js"
+import { keyboard } from "common/common"
+
 function Mouse(container, regl) {
   const TIME = 850
   const TIME_I = 10
   let _mouseTimeout
   let _isStill = false
-  let _canDraw  = false
+  let _canDraw = false
   let _interval
   let _clickCounter
   let _iCounter
@@ -35,7 +38,7 @@ function Mouse(container, regl) {
         _iCounter += TIME_I
       } else {
         _isStill = true
-        el.style.display = "block"
+        show()
         window.addEventListener("click", _onClick)
       }
     }, TIME_I)
@@ -49,7 +52,7 @@ function Mouse(container, regl) {
       Math.abs(e.pageX - _previousX) >= 1 ||
       Math.abs(e.pageY - _previousY) >= 1
     ) {
-      el.style.display = "none"
+      hide()
       reset()
       startCount()
     }
@@ -63,6 +66,11 @@ function Mouse(container, regl) {
 
   const isStill = () => _isStill
   const getClicks = () => _clickCounter * 0.5
+
+  const show = () => (el.style.display = "block")
+  const hide = () => (el.style.display = "none")
+
+  keyboard.keyCodes.on(KeyCode.KEY_SHIFT, v => (v ? show() : hide()))
 
   return {
     //updateMeshPosition,

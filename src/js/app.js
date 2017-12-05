@@ -3,11 +3,11 @@ console.log("process.env.NODE_ENV", process.env.NODE_ENV)
 const html = require("choo/html")
 const choo = require("choo")
 
-var app = choo()
+const app = choo()
 
 app.use(require("choo-devtools")())
 
-app.use(require("./store"))
+//app.use(require("./store"))
 
 function mainView(state, emit) {
   return html`
@@ -22,5 +22,5 @@ function mainView(state, emit) {
 
 app.route(`/*`, mainView)
 
-var tree = app.start()
+const tree = app.start()
 document.body.appendChild(tree)

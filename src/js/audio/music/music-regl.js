@@ -7,7 +7,7 @@ import Geometry from "geometry"
 //const clamp = (val, min, max) => Math.max(min, Math.min(max, val))
 
 function MusicRegl(reglEngine) {
-  const { regl, engineInteraction, mouse } = reglEngine
+  const { regl, engineInteraction, mouse, on, off } = reglEngine
   const meshes = []
   const meshGeometry = Mesh(reglEngine)
 
@@ -63,31 +63,9 @@ function MusicRegl(reglEngine) {
     return mesh
   }
 
-  if (IS_DEV) {
-    regl.frame(function() {
-      regl.clear({
-        color: [0, 0, 0, 1],
-      })
-      reglEngine.setupCamera(() => {
-        meshes.forEach(mesh => mesh.draw())
-        /*mesh.draw({
-          color: [1, 0, 0],
-          ambientLightAmount: 0.3,
-          diffuseLightAmount: 0.8,
-          scaleAmount: 1,
-          positionAmount: 0,
-        })*/
-      })
-      //drawRegl()
-      /*line2d({
-        thickness: 4,
-        points: [0.25, 0, 0.3, 1.5, 0, 2],
-        close: false,
-        color: "red",
-      })*/
-    })
-  }
-
+  on("update", () => {
+    meshes.forEach(mesh => mesh.draw())
+  })
 
   return {
     add,

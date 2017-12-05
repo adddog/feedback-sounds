@@ -7,7 +7,6 @@ import MusicSequence from "./music-sequence"
 import { SAMPLE_TYPES, STATE, IS_DEV, GUI_O } from "common/common"
 
 function Music(reglEngine) {
-  return
   const musicRegl = new MusicRegl(reglEngine)
   const musicSequence = new MusicSequence({ sequenceLength: 32 })
 
@@ -17,12 +16,6 @@ function Music(reglEngine) {
     _analyzer
 
   function addStream(stream) {
-    /*var el = document.createElement("audio")
-    el.srcObject = stream
-    document.body.appendChild(el)
-    el.play()
-    console.log(el)
-    console.log(el.srcObject)*/
     _record.addStream(stream)
 
     const sound = Sono.create({

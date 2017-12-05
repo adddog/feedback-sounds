@@ -4,7 +4,7 @@ import { BaseMesh, reglGeo } from "geometry/base"
 import { VERT, FRAG } from "geometry/glsl"
 import { REGL_CONST } from "common/common"
 import { mat4, vec3 } from "gl-matrix"
-import observable from "proxy-observable"
+import observable from "lib/observable"
 
 const MusicGeometry = reglEngine => {
   const { regl } = reglEngine

@@ -1,48 +1,28 @@
-import observable from "proxy-observable"
-import {autobind} from "core-decorators"
+import observable from "lib/observable"
+import KeyCode from "keycode-js"
+import { autobind } from "core-decorators"
 
-export default class Keyboard {
+class Keyboard {
   constructor() {
-    this.keyCodes = o({
-
-    })
-
-    window.addEventListener("keyup", this._keyUp.bind(this.))
+    const model = {}
+    new Array(224).fill().forEach((_, i) => (model[i] = false))
+    this.keyCodes = observable(model)
+    window.addEventListener("keyup", this._keyUp)
+    window.addEventListener("keydown", this._keyDown)
   }
 
-  on(label, callback) {
-    this.listeners.has(label) || this.listeners.set(label, [])
-    this.listeners.get(label).push(callback)
+  @autobind
+  _keyUp(e) {
+    this.keyCodes[e.keyCode] = false
+  }
+  @autobind
+  _keyDown(e) {
+    this.keyCodes[e.keyCode] = true
   }
 
-  off(label, callback) {
-    let listeners = this.listeners.get(label),
-      index
-
-    if (listeners && listeners.length) {
-      index = listeners.reduce((i, listener, index) => {
-        return isFunction(listener) && listener === callback
-          ? (i = index)
-          : i
-      }, -1)
-
-      if (index > -1) {
-        listeners.splice(index, 1)
-        this.listeners.set(label, listeners)
-        return true
-      }
-    }
-    return false
-  }
-  emit(label, ...args) {
-    let listeners = this.listeners.get(label)
-
-    if (listeners && listeners.length) {
-      listeners.forEach(listener => {
-        listener(...args)
-      })
-      return true
-    }
-    return false
+  isDown(code){
+    return this.keyCodes[code]
   }
 }
+
+export default new Keyboard()

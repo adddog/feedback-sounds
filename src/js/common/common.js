@@ -4,11 +4,15 @@ import Tone from "tone"
 import Emitter from "./emitter"
 import { noop,sample } from "lodash"
 import Colors from "nice-color-palettes"
-import observable from "proxy-observable"
+import observable from "lib/observable"
+import Keyboard from "./keyboard-proxy"
 
 export const IS_DEV = process.env.NODE_ENV === "development"
 
+export const keyboard = Keyboard;
+
 export const GUI_O = {
+  toggleViews:noop,
   startRecord:noop,
   stopRecord:noop,
   makeDrone:noop,
@@ -16,6 +20,7 @@ export const GUI_O = {
 
 if (IS_DEV) {
   const gui = new dat.GUI()
+  gui.add(GUI_O, "toggleViews")
   gui.add(GUI_O, "startRecord")
   gui.add(GUI_O, "stopRecord")
   gui.add(GUI_O, "makeDrone")

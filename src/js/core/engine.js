@@ -128,11 +128,18 @@ const REGL = el => {
 
       reglGeometryActions.update()
 
+      if(_listeners.update.length){
+        _listeners.update.forEach(cb => cb())
+      }
+
       //mouse.draw()
     })
   }
 
   function update() {
+    regl.clear({
+      color: [0, 0, 0, 1],
+    })
     drawRegl()
     _updateCounter++
   }
@@ -146,6 +153,19 @@ const REGL = el => {
     })
   }
 
+  const _listeners = {
+    update: [],
+  }
+
+  function on(str, cb) {
+    _listeners[str] = _listeners[str] || []
+    _listeners[str].push(cb)
+  }
+
+  function off(str, cb) {
+    _listeners[str].splice(_listeners[str].indexOf(cb), 1)
+  }
+
   function destroy() {
     regl.destroy()
   }
@@ -156,6 +176,8 @@ const REGL = el => {
     mouse,
     setupCamera,
     update,
+    on,
+    off,
     destroy,
   }
 }

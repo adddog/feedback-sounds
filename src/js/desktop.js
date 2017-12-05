@@ -1,5 +1,5 @@
+import Polyfill from "proxy-polyfill"
 import Tone from "tone"
-import observable from "proxy-observable"
 import pathParse from "path-parse"
 import request from "xhr-request"
 import { cover, contain } from "intrinsic-scale"
@@ -60,7 +60,7 @@ const DesktopSequencer = () => {
         const audio = Audio(reglEngine)
 
         if (!IS_DEV) {
-          cb({ visual: reglEngine, state: STATE, music: audio, Tone })
+          cb({ engine: reglEngine, state: STATE, music: audio, Tone })
         }
       }
     )

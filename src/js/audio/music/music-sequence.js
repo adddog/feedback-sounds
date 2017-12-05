@@ -15,7 +15,7 @@ export default class MusicSequence extends BaseSequence {
       wet: 1.0,
     })
 
-    this.pitchShift.connect(Tone.Master);
+    //this.pitchShift.connect(Tone.Master);
 
     this._samples = []
   }
@@ -53,12 +53,12 @@ export default class MusicSequence extends BaseSequence {
       sound.sampleKey
     )
 
-    this.samplePlayer.get(sound.sampleKey).connect(this.pitchShift)
+    //this.samplePlayer.get(sound.sampleKey).connect(this.pitchShift)
 
     controller.on(
       "pitch",
       v => {
-        console.log(v);
+        //console.log(v);
        // (this.pitchShift.pitch = Math.floor(v * 12))
       }
     )

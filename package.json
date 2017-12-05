@@ -5,12 +5,7 @@
     "license": "MIT",
     "homepage": "",
     "author": "Sam Elie <samradelie@gmail.com>",
-    "keywords": [
-        "budo",
-        "browserify",
-        "choo",
-        "postcss"
-    ],
+    "keywords": [],
     "repository": {
         "type": "git",
         "url": ".git",
@@ -23,6 +18,7 @@
         "choo": "^6.5.1",
         "choo-devtools": "^2.1.0",
         "color": "^2.0.1",
+        "core-decorators": "^0.20.0",
         "dat.gui": "github:dataarts/dat.gui",
         "geo-3d-box": "^2.0.2",
         "geo-arc": "^1.1.2",
@@ -46,6 +42,7 @@
         "primitive-sphere": "^3.0.0",
         "primitive-torus": "^1.0.4",
         "proxy-observable": "^4.0.2",
+        "proxy-polyfill": "^0.1.7",
         "ray-sphere-intersection": "^1.0.0",
         "regl": "^1.3.0",
         "regl-line2d": "^2.0.4",
@@ -67,8 +64,7 @@
         "babelify": "^8.0.0",
         "browserify": "^14.5.0",
         "budo": "^10.0.4",
-        "concurrently": "^3.5.0",
-        "core-decorators": "^0.20.0",
+        "concurrently": "^3.5.1",
         "cssnano-cli": "^1.0.5",
         "ejs-cli": "^2.0.0",
         "envify": "^4.1.0",
@@ -88,12 +84,13 @@
         "postcss-simple-vars": "^4.1.0",
         "postcss-smart-import": "^0.7.5",
         "sugarss": "^1.0.1",
-        "uglify-es": "^3.1.8",
+        "uglify-es": "^3.2.1",
         "webworkify": "^1.5.0"
     },
     "scripts": {
         "start": "NODE_ENV=development ejs-cli src/index.ejs > index.html && concurrently \"NODE_ENV=development budo index.js:bundle.js --host 0.0.0.0 --ssl -C sslcerts/local_cert.pem -K sslcerts/local_key.pem --cors --live --serve bundle.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css -m -w\"",
-        "build": "concurrently \"NODE_ENV=production browserify src/js/Sequencer.js | uglifyjs > feedback-sounds.bundle.min.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css && cssnano < feedback-sounds.css > feedback-sounds.min.css && NODE_ENV=production ejs-cli src/index.ejs > index.html\" && cp feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js"
+        "build": "concurrently \"NODE_ENV=production browserify src/js/desktop.js | uglifyjs > feedback-sounds.bundle.min.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css && cssnano < feedback-sounds.css > feedback-sounds.min.css && NODE_ENV=production ejs-cli src/index.ejs > index.html\" && cp feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js",
+        "build:js": "concurrently \"browserify src/js/desktop.js -t [ envify --NODE_ENV production ] -t babelify --presets [ es2015 stage-0 stage-1 stage-2 ] | uglifyjs > bundle.min.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css && cssnano < feedback-sounds.css > feedback-sounds.min.css && NODE_ENV=production ejs-cli src/index.ejs > index.html\" "
     },
     "browserify": {
         "transform": [
@@ -105,6 +102,18 @@
                         "stage-0",
                         "stage-1",
                         "stage-2"
+                    ],
+                    "plugins": [
+                        "transform-decorators-legacy",
+                        "transform-async-to-generator",
+                        [
+                            "module-resolver",
+                            {
+                                "root": [
+                                    "./src/js"
+                                ]
+                            }
+                        ]
                     ],
                     "extensions": ".js"
                 }
