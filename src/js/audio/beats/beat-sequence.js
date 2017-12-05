@@ -128,8 +128,6 @@ export default class Beats extends BaseSequence {
   _onUpdate(time, col) {
     this._currentIndex = col
 
-    if (this._selectedIndexs.indexOf(this._currentIndex) < 0) {
-    }
     if (this._selectedIndexs.indexOf(this._previousIndex) < 0) {
       this._setClassOnStep(
         this.SEQUENCE_DATA[this._previousIndex].el,

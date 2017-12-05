@@ -33,6 +33,7 @@
         "glsl-y-rotate": "^2.0.0",
         "icosphere": "^1.0.0",
         "intrinsic-scale": "^3.0.3",
+        "keycode-js": "^0.0.4",
         "lodash": "^4.17.4",
         "nanocomponent": "^6.4.2",
         "nice-color-palettes": "^2.0.0",

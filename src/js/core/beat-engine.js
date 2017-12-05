@@ -22,6 +22,11 @@ const BeatEngine = props => {
   } = props
 
   const geometries = Geometry(regl)
+  const SAMPLE_TYPES_VALUES = values(SAMPLE_TYPES)
+
+  let _nextSample = -1
+  const getNextSample = () =>
+    (_nextSample += 1) % SAMPLE_TYPES_VALUES.length
 
   const _defaultGeoprops = (props = {}) =>
     assign(
@@ -44,7 +49,9 @@ const BeatEngine = props => {
 
   function createGeometry(soundData, type = "fly", props = {}) {
     props = _defaultGeoprops(props)
-    soundData = soundData || { ...sample(values(SAMPLE_TYPES)) }
+    soundData = soundData || {
+      ...SAMPLE_TYPES_VALUES[getNextSample()],
+    }
     assign(props, {
       color: {
         value: soundData.color
