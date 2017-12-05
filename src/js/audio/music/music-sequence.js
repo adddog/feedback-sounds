@@ -36,16 +36,19 @@ export default class MusicSequence extends BaseSequence {
 
   _onUpdate(time, col) {
     this._currentIndex = col
-    if(this._isHidden) return
 
-    this._setClassOnStep(
-      this.SEQUENCE_DATA[this._previousIndex].el,
-      false
-    )
-    this._setClassOnStep(
-      this.SEQUENCE_DATA[this._currentIndex].el,
-      true
-    )
+    if(!this._isHidden){
+
+      this._setClassOnStep(
+        this.SEQUENCE_DATA[this._previousIndex].el,
+        false
+      )
+      this._setClassOnStep(
+        this.SEQUENCE_DATA[this._currentIndex].el,
+        true
+      )
+
+    }
 
     this.SEQUENCE_DATA[
       this._currentIndex

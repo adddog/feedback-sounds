@@ -23,3 +23,5 @@ autodafe-mega-drum-machines-collection.zip
 *.wav
 *.mp3
 *.ogg
+
+yarn.lock

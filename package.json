@@ -27,6 +27,7 @@
         "gl-matrix": "^2.4.0",
         "glsl-noise": "0.0.0",
         "glsl-y-rotate": "^2.0.0",
+        "hammerjs": "^2.0.8",
         "icosphere": "^1.0.0",
         "intrinsic-scale": "^3.0.3",
         "keycode-js": "^0.0.4",
@@ -57,7 +58,7 @@
         "babel-plugin-module-resolver": "^3.0.0",
         "babel-plugin-transform-async-to-generator": "^6.24.1",
         "babel-plugin-transform-decorators-legacy": "^1.3.4",
-        "babel-preset-es2015": "^6.24.1",
+        "babel-preset-env": "^1.6.1",
         "babel-preset-stage-0": "^6.24.1",
         "babel-preset-stage-1": "^6.24.1",
         "babel-preset-stage-2": "^6.24.1",
@@ -89,10 +90,10 @@
     },
     "scripts": {
         "start": "NODE_ENV=development ejs-cli src/index.ejs > index.html && concurrently \"NODE_ENV=development budo index.js:bundle.js --host 0.0.0.0 --ssl -C sslcerts/local_cert.pem -K sslcerts/local_key.pem --cors --live --serve bundle.js \" \"postcss src/postcss/index.sss -o feedback-sounds.css -m -w\"",
-        "build:js": "NODE_ENV=production browserify src/js/desktop.js | uglifyjs > build/feedback-sounds.bundle.min.js && npm run build:copy-files",
+        "build:js": "NODE_ENV=production browserify src/js/desktop.js | uglifyjs -c drop_console=true -m > build/feedback-sounds.bundle.min.js && npm run build:copy-files",
         "build:ejs": "NODE_ENV=production ejs-cli src/index.ejs > index.html",
         "build:css": "postcss src/postcss/index.sss -o build/feedback-sounds.css && cssnano < build/feedback-sounds.css > build/feedback-sounds.min.css",
-        "build:copy-files":  "cp build/feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js",
+        "build:copy-files": "cp build/feedback-sounds.bundle.min.js ../feedback-world/assets/feedback-sounds.bundle.min.js",
         "build": "concurrently \"npm run build:js \" \"npm run build:css\" \"npm run build:ejs\" "
     },
     "browserify": {
@@ -101,7 +102,14 @@
                 "babelify",
                 {
                     "presets": [
-                        "es2015",
+                        [
+                            "env",
+                            {
+                                "targets": {
+                                    "chrome": "60"
+                                }
+                            }
+                        ],
                         "stage-0",
                         "stage-1",
                         "stage-2"
