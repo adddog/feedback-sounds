@@ -13,11 +13,27 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
 
+acorn-jsx@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-3.0.1.tgz#afdf9488fb1ecefc8348f6fb22f464e32a58b36b"
+  dependencies:
+    acorn "^3.0.4"
+
+acorn5-object-spread@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/acorn5-object-spread/-/acorn5-object-spread-4.0.0.tgz#d5758081eed97121ab0be47e31caaef2aa399697"
+  dependencies:
+    acorn "^5.1.2"
+
+acorn@^3.0.4:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-3.3.0.tgz#45e37fb39e8da3f25baee3ff5369e2bb5f22017a"
+
 acorn@^4.0.3:
   version "4.0.13"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
-acorn@^5.0.0, acorn@^5.2.1:
+acorn@^5.0.0, acorn@^5.1.2, acorn@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.2.1.tgz#317ac7821826c22c702d66189ab8359675f135d7"
 
@@ -36,6 +52,10 @@ ajv@^5.1.0:
     fast-deep-equal "^1.0.0"
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.3.0"
+
+almost-equal@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/almost-equal/-/almost-equal-1.1.0.tgz#f851c631138757994276aa2efbe8dfa3066cccdd"
 
 alphanum-sort@^1.0.1, alphanum-sort@^1.0.2:
   version "1.0.2"
@@ -117,6 +137,10 @@ arr-flatten@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/arr-flatten/-/arr-flatten-1.1.0.tgz#36048bbff4e7b47e136644316c99669ea5ae91f1"
 
+array-bounds@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/array-bounds/-/array-bounds-1.0.1.tgz#da11356b4e18e075a4f0c86e1f179a67b7d7ea31"
+
 array-filter@~0.0.0:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/array-filter/-/array-filter-0.0.1.tgz#7da8cf2e26628ed732803581fd21f67cacd2eeec"
@@ -128,6 +152,18 @@ array-find-index@^1.0.1:
 array-map@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/array-map/-/array-map-0.0.0.tgz#88a2bab73d1cf7bcd5c1b118a003f66f665fa662"
+
+array-normalize@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/array-normalize/-/array-normalize-1.1.3.tgz#73fb837f4816ec19151d3c5e8d853a4590ce01bd"
+  dependencies:
+    array-bounds "^1.0.0"
+
+array-pack-2d@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/array-pack-2d/-/array-pack-2d-0.1.1.tgz#bdbdcf2f7fb19bfb8e06fbf01d8bc8c664b4693d"
+  dependencies:
+    dtype "^1.0.0"
 
 array-reduce@~0.0.0:
   version "0.0.0"
@@ -1173,6 +1209,26 @@ browserslist@^2.9.1:
     caniuse-lite "^1.0.30000770"
     electron-to-chromium "^1.3.27"
 
+buble@^0.17.0:
+  version "0.17.3"
+  resolved "https://registry.yarnpkg.com/buble/-/buble-0.17.3.tgz#b30e281054aa619da5e7b0530ac99fcf309bee67"
+  dependencies:
+    acorn "^5.1.2"
+    acorn-jsx "^3.0.1"
+    acorn5-object-spread "^4.0.0"
+    chalk "^2.1.0"
+    magic-string "^0.22.4"
+    minimist "^1.2.0"
+    os-homedir "^1.0.1"
+    vlq "^0.2.2"
+
+bubleify@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/bubleify/-/bubleify-1.0.0.tgz#fb32f8332bb438ad165681fe4df6d8bd586ad0c5"
+  dependencies:
+    buble "^0.17.0"
+    object-assign "^4.1.1"
+
 budo@^10.0.4:
   version "10.0.4"
   resolved "https://registry.yarnpkg.com/budo/-/budo-10.0.4.tgz#e846e6160a9be0244b26a69d815208e412340c2a"
@@ -1393,6 +1449,10 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
+clamp@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/clamp/-/clamp-1.0.1.tgz#66a0e64011816e37196828fdc8c8c147312c8634"
+
 clap@^1.0.9:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/clap/-/clap-1.2.3.tgz#4f36745b32008492557f46412d66d50cb99bce51"
@@ -1454,6 +1514,37 @@ color-convert@^1.3.0, color-convert@^1.9.0, color-convert@^1.9.1:
 color-name@^1.0.0, color-name@^1.1.1:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.3.tgz#a7d0558bd89c42f795dd42328f740831ca53bc25"
+
+color-normalize@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/color-normalize/-/color-normalize-1.0.1.tgz#39958c0b5ad9b44d2ccad5271f714881fabdfbe7"
+  dependencies:
+    clamp "^1.0.1"
+    color-rgba "^2.0.0"
+    dtype "^2.0.0"
+
+color-parse@^1.3.5:
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/color-parse/-/color-parse-1.3.5.tgz#4c810f72e808e4f73b63f72acd78da538a515564"
+  dependencies:
+    color-name "^1.0.0"
+    defined "^1.0.0"
+    is-plain-obj "^1.1.0"
+
+color-rgba@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/color-rgba/-/color-rgba-2.0.0.tgz#d015114ce3e84368795c9d6ddfef556f981739c5"
+  dependencies:
+    clamp "^1.0.1"
+    color-parse "^1.3.5"
+    color-space "^1.14.6"
+
+color-space@^1.14.6:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/color-space/-/color-space-1.15.0.tgz#2623f54c1181e0fe6e1cff0d87e24eb1040f5b0e"
+  dependencies:
+    husl "^5.0.0"
+    mumath "^3.0.0"
 
 color-string@^0.3.0:
   version "0.3.0"
@@ -1944,6 +2035,14 @@ domain-browser@~1.1.0:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.1.7.tgz#867aa4b093faa05f1de08c06f4d7b21fdf8698bc"
 
+dtype@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/dtype/-/dtype-1.0.0.tgz#ae34ffa282673715203582d61bbdd0aad3cba3e7"
+
+dtype@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/dtype/-/dtype-2.0.0.tgz#cd052323ce061444ecd2e8f5748f69a29be28434"
+
 duplexer2@^0.1.2, duplexer2@~0.1.0, duplexer2@~0.1.2:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer2/-/duplexer2-0.1.4.tgz#8b12dab878c0d69e3e7891051662a32fc6bddcc1"
@@ -1958,6 +2057,10 @@ duplexify@^3.4.5:
     inherits "^2.0.1"
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
+
+earcut@^2.1.1:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/earcut/-/earcut-2.1.2.tgz#542add0ca3a7b713452720e1d053937d3daf3784"
 
 ecc-jsbn@~0.1.1:
   version "0.1.1"
@@ -2266,6 +2369,14 @@ findup@^0.1.5:
   dependencies:
     colors "~0.6.0-1"
     commander "~2.1.0"
+
+flatten-vertex-data@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/flatten-vertex-data/-/flatten-vertex-data-1.0.0.tgz#d61c94f2a6564f301d6678b7261616af0004708c"
+  dependencies:
+    array-pack-2d "^0.1.1"
+    dtype "^2.0.0"
+    is-typedarray "^1.0.0"
 
 flatten@^1.0.2:
   version "1.0.2"
@@ -2869,6 +2980,10 @@ https-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
 
+husl@^5.0.0:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/husl/-/husl-5.0.3.tgz#ee272aaff1bebe40df3588ed007b70de7e679788"
+
 hyperscript-attribute-to-property@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/hyperscript-attribute-to-property/-/hyperscript-attribute-to-property-1.0.0.tgz#825308d49bb8e2957923f731981bcc811cad7aff"
@@ -3094,7 +3209,7 @@ is-otf@^0.1.1:
   dependencies:
     b3b "0.0.1"
 
-is-plain-obj@^1.0.0:
+is-plain-obj@^1.0.0, is-plain-obj@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-plain-obj/-/is-plain-obj-1.1.0.tgz#71a50c8429dfca773c92a390a4a03b39fcd51d3e"
 
@@ -3136,7 +3251,7 @@ is-ttf@^0.2.1:
   dependencies:
     b3b "0.0.1"
 
-is-typedarray@~1.0.0:
+is-typedarray@^1.0.0, is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
 
@@ -3440,6 +3555,12 @@ macaddress@^0.2.8:
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/macaddress/-/macaddress-0.2.8.tgz#5904dc537c39ec6dbefeae902327135fa8511f12"
 
+magic-string@^0.22.4:
+  version "0.22.4"
+  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.22.4.tgz#31039b4e40366395618c1d6cf8193c53917475ff"
+  dependencies:
+    vlq "^0.2.1"
+
 map-limit@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/map-limit/-/map-limit-0.0.1.tgz#eb7961031c0f0e8d001bf2d56fab685d58822f38"
@@ -3621,6 +3742,12 @@ ms@0.7.2:
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
+
+mumath@^3.0.0:
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/mumath/-/mumath-3.3.4.tgz#48d4a0f0fd8cad4e7b32096ee89b161a63d30bbf"
+  dependencies:
+    almost-equal "^1.1.0"
 
 murmurhash-js@^1.0.0:
   version "1.0.0"
@@ -4172,6 +4299,10 @@ performance-now@^0.2.0:
 performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
+
+pick-by-alias@^1.1.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/pick-by-alias/-/pick-by-alias-1.2.0.tgz#5f7cb2b1f21a6e1e884a0c87855aa4a37361107b"
 
 pify@^2.0.0, pify@^2.3.0:
   version "2.3.0"
@@ -4968,6 +5099,22 @@ regjsparser@^0.1.4:
   dependencies:
     jsesc "~0.5.0"
 
+regl-line2d@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/regl-line2d/-/regl-line2d-2.0.4.tgz#78715015e3a00e7b8b6ee848466dd5135e6cb3f8"
+  dependencies:
+    array-bounds "^1.0.0"
+    array-normalize "^1.1.3"
+    bubleify "^1.0.0"
+    color-normalize "^1.0.0"
+    earcut "^2.1.1"
+    flatten-vertex-data "^1.0.0"
+    glslify "^6.1.0"
+    object-assign "^4.1.1"
+    pick-by-alias "^1.1.0"
+    to-float32 "^1.0.0"
+    update-diff "^1.0.2"
+
 regl@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/regl/-/regl-1.3.0.tgz#ccde82eff8a8a068a559581ceacbef1afea78ebd"
@@ -5745,6 +5892,10 @@ to-fast-properties@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"
 
+to-float32@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-float32/-/to-float32-1.0.0.tgz#32a310fe2fb7d49459037b1d47447ce5b2d5ac95"
+
 tone@^0.11.11:
   version "0.11.11"
   resolved "https://registry.yarnpkg.com/tone/-/tone-0.11.11.tgz#7af8521eba6df84a910d457485a13705f8c824e5"
@@ -5851,6 +6002,10 @@ unzip-response@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/unzip-response/-/unzip-response-1.0.2.tgz#b984f0877fc0a89c2c773cc1ef7b5b232b5b06fe"
 
+update-diff@^1.0.2:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/update-diff/-/update-diff-1.1.0.tgz#f510182d81ee819fb82c3a6b22b62bbdeda7808f"
+
 upper-case@^1.1.1:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/upper-case/-/upper-case-1.1.3.tgz#f6b4501c2ec4cdd26ba78be7222961de77621598"
@@ -5916,6 +6071,10 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
+
+vlq@^0.2.1, vlq@^0.2.2:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/vlq/-/vlq-0.2.3.tgz#8f3e4328cf63b1540c0d67e1b2778386f8975b26"
 
 vm-browserify@~0.0.1:
   version "0.0.4"

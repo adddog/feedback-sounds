@@ -108,7 +108,7 @@ export default class Beats extends BaseSequence {
       `${sampleKey} ${this._samples[sampleKey]}`,
       `with ${props.uuid}`
     )
-    sequnceDataStep.v.push({
+    sequnceDataStep.sampleKeys.push({
       meshProps: props,
       sampleKey,
     })
@@ -128,24 +128,24 @@ export default class Beats extends BaseSequence {
   _onUpdate(time, col) {
     this._currentIndex = col
 
-    if (
-      this._selectedIndexs.indexOf(this._currentIndex) < 0 &&
-      this._selectedIndexs.indexOf(this._previousIndex) < 0
-    ) {
+    if (this._selectedIndexs.indexOf(this._currentIndex) < 0) {
+    }
+    if (this._selectedIndexs.indexOf(this._previousIndex) < 0) {
       this._setClassOnStep(
         this.SEQUENCE_DATA[this._previousIndex].el,
         false
       )
-      this._setClassOnStep(
-        this.SEQUENCE_DATA[this._currentIndex].el,
-        true
-      )
     }
+    this._setClassOnStep(
+      this.SEQUENCE_DATA[this._currentIndex].el,
+      true
+    )
 
     if (this._currentIndex === 0 && this._currentTime) {
       STATE.sequenceDuration = time - this._currentTime
       this._currentTime = time
     }
+
     this.SEQUENCE_DATA[
       this._previousIndex
     ].sampleKeys.forEach(soundObj => {
@@ -167,7 +167,9 @@ export default class Beats extends BaseSequence {
           Math.abs(soundObj.meshProps.position[2]) /
           REGL_CONST.MAX_Z
       let vel = Math.random() * 0.2 + 0.2
-      this.samplePlayer.get(soundObj.sampleKey).start(time, 0, "32n", 0, vel)
+      this.samplePlayer
+        .get(soundObj.sampleKey)
+        .start(time, 0, "32n", 0, vel)
     })
 
     this._previousIndex = this._currentIndex

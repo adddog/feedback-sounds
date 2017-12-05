@@ -1,5 +1,7 @@
 import Mesh from "./music-geometry"
+import { IS_DEV, GUI_O } from "common/common"
 import { mat4, vec3 } from "gl-matrix"
+import { compact } from "lodash"
 import Geometry from "geometry"
 
 //const clamp = (val, min, max) => Math.max(min, Math.min(max, val))
@@ -20,28 +22,27 @@ function MusicRegl(reglEngine) {
       }
     })
 
-  const getHits = () => engineInteraction.getHits(meshes)
+  const getMeshesFromHits = () =>
+    compact(
+      engineInteraction
+        .getHits(meshes)
+        .map((hit, i) => (!!hit ? meshes[i] : null))
+    )
 
-  engineInteraction.on("ray:click", ray => {
-    const flyHits = getHits()
-  })
+  engineInteraction.on("ray:click", ray => {})
 
-  let _currentHits = []
+  let _currentHitMeshes = []
   engineInteraction.on("ray:down", ray => {
-    _currentHits = getHits()
-    if (_currentHits.length) {
-      const mesh = meshes[0]
-      mesh.onDown()
-    }
+    _currentHitMeshes = getMeshesFromHits()
+    _currentHitMeshes.forEach(mesh => mesh.onDown())
   })
 
   engineInteraction.on("ray:up", ray => {
-    _currentHits.length = 0
+    _currentHitMeshes.length = 0
   })
 
   engineInteraction.on("ray:move", ray => {
-    if (_currentHits.length) {
-      const mesh = meshes[0]
+    _currentHitMeshes.forEach(mesh =>
       mesh.updatePosition(
         vec3.sub(
           vec3.create(),
@@ -53,20 +54,22 @@ function MusicRegl(reglEngine) {
           )
         )
       )
-    }
+    )
   })
 
   function add(audioBuffer) {
     const mesh = meshGeometry.createFromAudioBuffer(audioBuffer)
-
     meshes.push(mesh)
+    return mesh
+  }
 
+  if (IS_DEV) {
     regl.frame(function() {
       regl.clear({
         color: [0, 0, 0, 1],
       })
       reglEngine.setupCamera(() => {
-        mesh.draw()
+        meshes.forEach(mesh => mesh.draw())
         /*mesh.draw({
           color: [1, 0, 0],
           ambientLightAmount: 0.3,
@@ -76,8 +79,15 @@ function MusicRegl(reglEngine) {
         })*/
       })
       //drawRegl()
+      /*line2d({
+        thickness: 4,
+        points: [0.25, 0, 0.3, 1.5, 0, 2],
+        close: false,
+        color: "red",
+      })*/
     })
   }
+
 
   return {
     add,

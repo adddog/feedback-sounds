@@ -1,4 +1,4 @@
-import Sequencer from "./Sequencer"
+import Desktop from "./desktop"
 
 /*
 DEV ONLY
@@ -9,7 +9,7 @@ function store(state, emitter) {
 
     console.log("DOMContentLoaded")
 
-    window.Sequencer.start()
+    window.DesktopSequencer.start()
   })
 }
 

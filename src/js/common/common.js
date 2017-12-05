@@ -1,11 +1,25 @@
+const dat = require("dat.gui/build/dat.gui.js")
 import Color from "color"
 import Tone from "tone"
 import Emitter from "./emitter"
-import { sample } from "lodash"
+import { noop,sample } from "lodash"
 import Colors from "nice-color-palettes"
 import observable from "proxy-observable"
 
-export const IS_DEV = process.env.NODE_ENV==="development"
+export const IS_DEV = process.env.NODE_ENV === "development"
+
+export const GUI_O = {
+  startRecord:noop,
+  stopRecord:noop,
+  makeDrone:noop,
+}
+
+if (IS_DEV) {
+  const gui = new dat.GUI()
+  gui.add(GUI_O, "startRecord")
+  gui.add(GUI_O, "stopRecord")
+  gui.add(GUI_O, "makeDrone")
+}
 
 export const SEQUENCE_LENGTH = 32
 export const getColor = () => sample(Colors)

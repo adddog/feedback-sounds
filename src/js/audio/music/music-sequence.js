@@ -9,6 +9,14 @@ export default class MusicSequence extends BaseSequence {
     this.samplePlayer = new Tone.Players()
     this.samplePlayer.connect(Tone.Master)
 
+    this.pitchShift = new Tone.PitchShift({
+      windowSize: 0.1,
+      feedback: 0.0,
+      wet: 1.0,
+    })
+
+    this.pitchShift.connect(Tone.Master);
+
     this._samples = []
   }
 
@@ -22,9 +30,7 @@ export default class MusicSequence extends BaseSequence {
     this.SEQUENCE_DATA[
       this._currentIndex
     ].sampleKeys.forEach(soundObj => {
-      this.samplePlayer
-        .get(soundObj.sampleKey)
-        .start()
+      this.samplePlayer.get(soundObj.sampleKey).start()
     })
 
     this._previousIndex = this._currentIndex
@@ -36,7 +42,7 @@ export default class MusicSequence extends BaseSequence {
     })
   }
 
-  add(soundBuffer) {
+  add(soundBuffer, controller) {
     const sound = {
       sampleKey: this._createSampleKey(),
     }
@@ -45,6 +51,16 @@ export default class MusicSequence extends BaseSequence {
     this._addToSequence(
       this.SEQUENCE_DATA[this._currentIndex],
       sound.sampleKey
+    )
+
+    this.samplePlayer.get(sound.sampleKey).connect(this.pitchShift)
+
+    controller.on(
+      "pitch",
+      v => {
+        console.log(v);
+       // (this.pitchShift.pitch = Math.floor(v * 12))
+      }
     )
   }
 }

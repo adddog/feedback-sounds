@@ -4,11 +4,12 @@ import Effects from "sono/effects"
 import MusicRegl from "./music-regl"
 import MediaRecord from "./mediaRecord"
 import MusicSequence from "./music-sequence"
-import { SAMPLE_TYPES, STATE, IS_DEV } from "common/common"
+import { SAMPLE_TYPES, STATE, IS_DEV, GUI_O } from "common/common"
 
 function Music(reglEngine) {
+  return
   const musicRegl = new MusicRegl(reglEngine)
-  const musicSequence = new MusicSequence({ sequenceLength: 64 })
+  const musicSequence = new MusicSequence({ sequenceLength: 32 })
 
   const _record = MediaRecord({ type: "audio/webm" })
 
@@ -24,26 +25,19 @@ function Music(reglEngine) {
     console.log(el.srcObject)*/
     _record.addStream(stream)
 
-    if (_analyzer) {
-      _analyzer.destroy()
-    }
-    _sounds.push(
-      Sono.create({
-        data: stream,
-      })
-    )
-    const sound = getSound()
-    _analyzer = sound.effects.add(
-      Effects.analyser({
-        fftSize: 128,
-        useFloats: true,
-      })
-    )
+    const sound = Sono.create({
+      data: stream,
+    })
+    _sounds.push({
+      sound: sound,
+      analyzer: sound.effects.add(
+        Effects.analyser({
+          fftSize: 128,
+          useFloats: true,
+        })
+      ),
+    })
     sound.volume = 0
-  }
-
-  const onProgress = e => {
-    console.log(e)
   }
 
   const getSound = () => _sounds[_sounds.length - 1]
@@ -52,36 +46,31 @@ function Music(reglEngine) {
   var pitches = []
 
   function start() {
-    getSound().volume = 0
+    const { sound, analyzer } = getSound()
+    sound.volume = 0
     _record.start()
     _interval = setInterval(() => {
-      _analyzer.getPitch(pitch => {
-        console.log(pitch)
-        pitches.push(pitch)
-        /*console.log("sound.currentTime", sound.currentTime)
-        if (t < 3 && !sound.ended) {
-          t += 0.25
-          console.log(t)
-          setTimeout(() => {
-            lookUp()
-          }, 250)
-        } else {
-          console.log(pitches)
-        }*/
+      analyzer.getPitch(pitch => {
+        console.log(`Note: ${pitch.note}`)
+        if (pitch.hertz > 0) {
+          pitches.push(pitch)
+        }
       })
-    }, 250)
+    }, 180)
   }
   function stop() {
-    getSound().volume = 0
+    const { sound } = getSound()
+    sound.volume = 0
     clearInterval(_interval)
     _record.stop(blob => {
-      var fileReader = new FileReader()
+      const fileReader = new FileReader()
       fileReader.onloadend = () => {
         Sono.context
           .decodeAudioData(fileReader.result)
           .then(buffer => {
-            musicRegl.add(buffer)
-            musicSequence.add(buffer)
+            const { controller } = musicRegl.add(buffer)
+            musicSequence.add(buffer, controller)
+            buffer = null
           })
       }
       fileReader.readAsArrayBuffer(blob)
@@ -93,15 +82,31 @@ function Music(reglEngine) {
       .getUserMedia({ video: false, audio: true })
       .then(function(stream) {
         addStream(stream)
-        start()
-        setTimeout(() => {
-          stop()
-        }, 3000)
       })
       .catch(function(err) {
         console.log(err)
       })
   }
+
+  const getAverage = pitches =>
+    pitches.reduce((accum, obj) => {
+      return (accum += Math.floor(obj.hertz))
+    }, 0) / pitches.length
+
+  GUI_O.startRecord = () => {
+    start()
+  }
+  GUI_O.stopRecord = () => {
+    stop()
+  }
+
+  /*GUI_O.makeDrone = () => {
+    if (!pitches.length) return
+    const squareWave = Sono.create("sine")
+    squareWave.frequency = getAverage(pitches)
+    squareWave.play()
+  }*/
+
   return {
     addStream,
     start,

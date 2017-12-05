@@ -8,7 +8,7 @@ import { SAMPLE_TYPES, STATE, IS_DEV } from "common/common"
 import Audio from "audio"
 import ReglEngine from "core/engine"
 
-const Sequencer = () => {
+const DesktopSequencer = () => {
   function start(regl, cb, audioPath, containerEl, options = {}) {
     if (!IS_DEV) {
       if (!regl || !cb || !audioPath || !containerEl) {
@@ -29,9 +29,8 @@ const Sequencer = () => {
         STATE.containerEl = containerEl
 
         const files = data.files.split("\n")
-        console.log(files)
         keys(SAMPLE_TYPES).forEach(type => (STATE.files[type] = []))
-        console.log(STATE.files)
+
         files.forEach(path => {
           const type = path.split("/")[1]
           STATE.files[type] = STATE.files[type] || []
@@ -72,4 +71,4 @@ const Sequencer = () => {
   }
 }
 
-window.Sequencer = Sequencer()
+window.DesktopSequencer = DesktopSequencer()
