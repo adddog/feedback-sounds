@@ -1,7 +1,7 @@
-const normals = require("angle-normals")
-import { VERT, FRAG } from "./glsl"
-import { BaseMesh, reglGeo,torusSettings } from "./base"
-import { REGL_CONST } from "../common"
+import normals from 'angle-normals'
+import { VERT, FRAG } from "geometry/glsl"
+import { BaseMesh, reglGeo,torusSettings } from "geometry/base"
+import { REGL_CONST } from "common/common"
 import { mat4 } from "gl-matrix"
 
 const torusGeometry = regl => {

@@ -1,14 +1,18 @@
 import Sono from "sono"
 import Effects from "sono/effects"
+//import Utils from "audio/utils"
+import MusicRegl from "./music-regl"
 import MediaRecord from "./mediaRecord"
 import MusicSequence from "./music-sequence"
-import Utils from "./utils"
 import { SAMPLE_TYPES, STATE, IS_DEV } from "common/common"
-function Music() {
-  const musicSequence = MusicSequence()
 
-  let _record,
-    _sounds = [],
+function Music(reglEngine) {
+  const musicRegl = new MusicRegl(reglEngine)
+  const musicSequence = new MusicSequence({ sequenceLength: 64 })
+
+  const _record = MediaRecord({ type: "audio/webm" })
+
+  let _sounds = [],
     _analyzer
 
   function addStream(stream) {
@@ -18,7 +22,8 @@ function Music() {
     el.play()
     console.log(el)
     console.log(el.srcObject)*/
-    _record = MediaRecord(stream, { type: "audio/webm" })
+    _record.addStream(stream)
+
     if (_analyzer) {
       _analyzer.destroy()
     }
@@ -27,22 +32,27 @@ function Music() {
         data: stream,
       })
     )
-    _analyzer = _sounds[_sounds.length - 1].effects.add(
+    const sound = getSound()
+    _analyzer = sound.effects.add(
       Effects.analyser({
         fftSize: 128,
         useFloats: true,
       })
     )
+    sound.volume = 0
   }
 
   const onProgress = e => {
     console.log(e)
   }
 
+  const getSound = () => _sounds[_sounds.length - 1]
+
   let _interval
   var pitches = []
 
   function start() {
+    getSound().volume = 0
     _record.start()
     _interval = setInterval(() => {
       _analyzer.getPitch(pitch => {
@@ -62,9 +72,19 @@ function Music() {
     }, 250)
   }
   function stop() {
+    getSound().volume = 0
     clearInterval(_interval)
     _record.stop(blob => {
-      musicSequence.add(URL.createObjectURL(blob))
+      var fileReader = new FileReader()
+      fileReader.onloadend = () => {
+        Sono.context
+          .decodeAudioData(fileReader.result)
+          .then(buffer => {
+            musicRegl.add(buffer)
+            musicSequence.add(buffer)
+          })
+      }
+      fileReader.readAsArrayBuffer(blob)
     })
   }
 

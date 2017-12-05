@@ -48,9 +48,10 @@ export const reglGeo = (regl, geo) => {
 export class BaseMesh {
   constructor(geo, props = {}) {
     this.framesRendered = 0
+    this.geo = geo
     this._randomSpeed = Math.random() * 0.8 + 0.2
     this.uuid = props.uuid || v4()
-    this._normals = normals(geo.cells, geo.positions)
+    this._normals = geo.normals || normals(geo.cells, geo.positions)
     this.modelMatrix = mat4.create()
     if (props.position) {
       mat4.translate(

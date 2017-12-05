@@ -1,7 +1,7 @@
-const normals = require("angle-normals")
-import { BaseMesh, reglGeo } from "./base"
-import { VERT, FRAG } from "./glsl"
-import { REGL_CONST } from "../common"
+import normals from 'angle-normals'
+import { BaseMesh, reglGeo } from "geometry/base"
+import { VERT, FRAG } from "geometry/glsl"
+import { REGL_CONST } from "common/common"
 import { mat4 } from "gl-matrix"
 
 const SphereGeometry = regl => {

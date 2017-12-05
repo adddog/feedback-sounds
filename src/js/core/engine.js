@@ -2,6 +2,10 @@ import Regl from "regl"
 import { v4 } from "uuid"
 import { mat4, vec3 } from "gl-matrix"
 import { assign, compact, values, sample } from "lodash"
+import { cover } from "intrinsic-scale"
+import pick from "camera-picking-ray"
+import intersect from "ray-sphere-intersection"
+
 import EaseNumber from "common/ease-number"
 import Mouse from "common/mouse"
 import Emitter from "common/emitter"
@@ -12,11 +16,9 @@ import {
   getColor,
   IS_DEV,
 } from "common/common"
-import Geometry from "./geometry"
-import ReglGeometryActions from "./regl-actions"
-import { cover } from "intrinsic-scale"
-var pick = require("camera-picking-ray")
-var intersect = require("ray-sphere-intersection")
+import Geometry from "geometry"
+import EngineInteraction from "core/engine-interaction"
+import ReglGeometryActions from "core/geometry-actions"
 
 /*import { WIDTH, HEIGHT } from "common/constants"
 import SDFs from "common/sdfs"*/
@@ -35,10 +37,18 @@ const REGL = el => {
 
   console.warn(`process.env.NODE_ENV: ${process.env.NODE_ENV}`)
 
-  const reglGeometryActions = ReglGeometryActions(regl)
+  let projectionMatrix = mat4.create()
+  const eyeMatrix = vec3.fromValues(0, 0, 1)
+  const viewMatrix = mat4.create()
 
-  const EYE = [0, 0, 1]
-  let projectionMat = mat4.create()
+  const reglGeometryActions = ReglGeometryActions(regl)
+  const mouse = Mouse(IS_DEV ? document.body : el, regl)
+  const engineInteraction = EngineInteraction(
+    mouse,
+    projectionMatrix,
+    viewMatrix
+  )
+
   const degToRad = degrees => degrees * (Math.PI / 180)
 
   function polarToVector3(lon, lat, radius, vector) {
@@ -53,9 +63,6 @@ const REGL = el => {
 
     return vector
   }
-
-  const eyeMatrix = vec3.fromValues(0, 0, 1)
-  const viewMatrix = mat4.create()
 
   const latEase = new EaseNumber(0, 0.001)
   const lonEase = new EaseNumber(0, 0.001)
@@ -77,13 +84,13 @@ const REGL = el => {
     context: {
       projection: ({ viewportWidth, viewportHeight }) => {
         mat4.perspective(
-          projectionMat,
+          projectionMatrix,
           Math.PI / 2.1,
           viewportWidth / viewportHeight,
           0.001,
           REGL_CONST.MAX_Z
         )
-        return projectionMat
+        return projectionMatrix
       },
 
       tick: ({ tick }) => (IS_DEV ? tick : _updateCounter),
@@ -123,12 +130,12 @@ const REGL = el => {
   }
 
   if (IS_DEV) {
-    regl.frame(function() {
+    /*regl.frame(function() {
       regl.clear({
         color: [0, 0, 0, 1],
       })
-      //drawRegl()
-    })
+      drawRegl()
+    })*/
   }
 
   const geometries = Geometry(regl)
@@ -183,37 +190,6 @@ const REGL = el => {
 
   createGeometry()
 
-  const ray = {
-    ro: [0, 0, 0],
-    rd: [0, 0, 0],
-  }
-
-  const setPickRay = e => {
-    const projView = mat4.multiply([], projectionMat, viewMatrix)
-    const invProjView = mat4.invert([], projView)
-
-    const screenHeight = window.innerHeight
-    const screenWidth = window.innerWidth
-    const mouse = [e.pageX, e.pageY]
-    const viewport = [0, 0, screenWidth, screenHeight]
-
-    pick(ray.ro, ray.rd, mouse, viewport, invProjView)
-  }
-
-  const RADIUS = 1.45
-  const getHits = (objects, scale = 1) =>
-    objects
-      .map(({ position }) => position)
-      .map(pos =>
-        intersect(
-          [],
-          ray.ro,
-          ray.rd,
-          pos,
-          (RADIUS + mouse.getClicks()) * scale
-        )
-      )
-
   const addToSequener = (object, hit, props = {}) =>
     Emitter.emit("object:clicked", {
       soundData: object.props.shape,
@@ -229,36 +205,16 @@ const REGL = el => {
       hit: hit,
     })
 
-  const mouse = Mouse(IS_DEV ? document.body : el, regl)
-
-  /*window.addEventListener("dblclick", e => {
-    console.log("dblclick")
-    clearTimeout(_clickTimeout)
-    setPickRay(e)
-    const staticObjects = reglGeometryActions.getObjectsAndPositions(
-      "static"
-    )
-    const staticHits = getHits(staticObjects)
-    let i = 0
-    for (i = 0; i < staticHits.length; i++) {
-      if (staticHits[i] && staticObjects[i].mesh.canInteract()) {
-        Emitter.emit(
-          "object:removed",
-          reglGeometryActions.removeAt(i, "static")
-        )
-        break
-      }
-    }
-  })
-*/
-  window.addEventListener("click", e => {
-    setPickRay(e)
+  engineInteraction.on("ray:click", ray => {
     const flyObjects = reglGeometryActions.getObjectsAndPositions()
     const staticObjects = reglGeometryActions.getObjectsAndPositions(
       "static"
     )
-    const flyHits = getHits(flyObjects, 1)
-    const staticHits = getHits(staticObjects, REGL_CONST.STATIC_SCALE)
+    const flyHits = engineInteraction.getHits(flyObjects, 1)
+    const staticHits = engineInteraction.getHits(
+      staticObjects,
+      REGL_CONST.STATIC_SCALE
+    )
 
     let i = 0
     for (i = 0; i < staticHits.length; i++) {
@@ -302,6 +258,9 @@ const REGL = el => {
 
   return {
     regl,
+    engineInteraction,
+    mouse,
+    setupCamera,
     update,
     destroy,
   }

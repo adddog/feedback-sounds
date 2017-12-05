@@ -39,6 +39,7 @@
         "path-parse": "^1.0.5",
         "primitive-capsule": "^3.0.1",
         "primitive-cube": "^2.0.1",
+        "primitive-cylinder": "https://adddog@github.com/adddog/primitive-cylinder.git",
         "primitive-icosphere": "^1.0.2",
         "primitive-quad": "^2.0.0",
         "primitive-sphere": "^3.0.0",

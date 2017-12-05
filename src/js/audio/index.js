@@ -1,9 +1,10 @@
 import Sono from "sono"
-import Beats from "./beats"
-import Music from "./music"
-function Audio(regl) {
+import Beats from "audio/beats/beats"
+import Music from "audio/music/music"
+
+function Audio(reglEngine) {
   const beats = Beats()
-  const music = Music()
+  const music = Music(reglEngine)
 
   return {
     beats,

@@ -5,8 +5,8 @@ import request from "xhr-request"
 import { cover, contain } from "intrinsic-scale"
 import { keys, values } from "lodash"
 import { SAMPLE_TYPES, STATE, IS_DEV } from "common/common"
-import Audio from "./audio"
-import Regl from "./regljs"
+import Audio from "audio"
+import ReglEngine from "core/engine"
 
 const Sequencer = () => {
   function start(regl, cb, audioPath, containerEl, options = {}) {
@@ -54,13 +54,14 @@ const Sequencer = () => {
         console.log("LOADED SOUNDS")
         console.log(STATE.files)
 
-        const reglAudio = Regl(
+        const reglEngine = ReglEngine(
           IS_DEV ? document.querySelector(".app") : regl
         )
-        const audio = Audio(reglAudio.regl)
+
+        const audio = Audio(reglEngine)
 
         if (!IS_DEV) {
-          cb({ visual: reglAudio, state: STATE, music: audio, Tone })
+          cb({ visual: reglEngine, state: STATE, music: audio, Tone })
         }
       }
     )

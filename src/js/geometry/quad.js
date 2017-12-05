@@ -1,6 +1,6 @@
-import { REGL_CONST } from "../common"
-import { BaseMesh, reglGeo } from "./base"
-import { VERT, FRAG } from "./glsl"
+import { REGL_CONST } from "common/common"
+import { BaseMesh, reglGeo } from "geometry/base"
+import { VERT, FRAG } from "geometry/glsl"
 import { mat4 } from "gl-matrix"
 
 const SphereGeometry = regl => {
