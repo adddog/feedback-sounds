@@ -7,7 +7,7 @@ const app = choo()
 
 app.use(require("choo-devtools")())
 
-//app.use(require("./store"))
+app.use(require("./store"))
 
 function mainView(state, emit) {
   return html`
@@ -15,7 +15,6 @@ function mainView(state, emit) {
     class="app"
     onload=${onload}
     >
-    <div class="sequencer"></div>
     </div>
   `
 }

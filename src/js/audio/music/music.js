@@ -8,7 +8,7 @@ import { SAMPLE_TYPES, STATE, IS_DEV, GUI_O } from "common/common"
 
 function Music(reglEngine) {
   const musicRegl = new MusicRegl(reglEngine)
-  const musicSequence = new MusicSequence({ sequenceLength: 32 })
+  const musicSequence = new MusicSequence({ sequenceLength: 64 })
 
   const _record = MediaRecord({ type: "audio/webm" })
 

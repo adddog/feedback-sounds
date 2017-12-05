@@ -16,8 +16,8 @@ import {
   getColor,
   IS_DEV,
 } from "common/common"
-import BeatEngine from "core/beat-engine"
-import ReglGeometryActions from "core/geometry-actions"
+import BeatEngine from "audio/beats/beat-engine"
+import ReglGeometryActions from "audio/beats/geometry-actions"
 import EngineInteraction from "core/engine-interaction"
 
 /*import { WIDTH, HEIGHT } from "common/constants"
@@ -125,10 +125,11 @@ const REGL = el => {
       //lonEase.update()
 
       //polarToVector3(lonEase.value, latEase.value, REGL_CONST.MAX_Z_HALF , eyeMatrix)
+      if(STATE.renderBeats){
+        reglGeometryActions.update()
+      }
 
-      reglGeometryActions.update()
-
-      if(_listeners.update.length){
+      if(STATE.renderMusic && _listeners.update.length){
         _listeners.update.forEach(cb => cb())
       }
 

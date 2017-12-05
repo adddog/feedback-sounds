@@ -19,7 +19,7 @@ const DesktopSequencer = () => {
     }
 
     request(
-      audioPath || "audio.json",
+      audioPath || "build/audio.json",
       {
         json: true,
       },

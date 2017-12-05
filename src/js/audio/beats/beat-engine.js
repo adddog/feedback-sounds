@@ -118,6 +118,7 @@ const BeatEngine = props => {
           CLONE
           */
           addToSequener(staticObjects[i], staticHits[i], {
+            uuid:v4(),
             position: staticObjects[i].position.map(
               value => (value += Math.random() * 0.5 - 0.25)
             ),

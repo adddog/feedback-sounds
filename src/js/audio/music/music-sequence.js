@@ -6,6 +6,9 @@ export default class MusicSequence extends BaseSequence {
   constructor(opts) {
     super(opts)
 
+    const { sequenceLength } = this.options
+    this.SEQUENCE_DATA = this.newSequenceData(sequenceLength)
+
     this.samplePlayer = new Tone.Players()
     this.samplePlayer.connect(Tone.Master)
 
@@ -15,9 +18,16 @@ export default class MusicSequence extends BaseSequence {
       wet: 1.0,
     })
 
+    this._containerEl = document.querySelector(
+      ".feedback-sequencer--music"
+    )
+    this._createSequenceEls()
+
     //this.pitchShift.connect(Tone.Master);
 
     this._samples = []
+    this.toggleActive(STATE.renderMusic)
+    STATE.on("renderMusic", v => this.toggleActive(v))
   }
 
   _createSampleKey() {
@@ -26,6 +36,16 @@ export default class MusicSequence extends BaseSequence {
 
   _onUpdate(time, col) {
     this._currentIndex = col
+    if(this._isHidden) return
+
+    this._setClassOnStep(
+      this.SEQUENCE_DATA[this._previousIndex].el,
+      false
+    )
+    this._setClassOnStep(
+      this.SEQUENCE_DATA[this._currentIndex].el,
+      true
+    )
 
     this.SEQUENCE_DATA[
       this._currentIndex
@@ -36,12 +56,6 @@ export default class MusicSequence extends BaseSequence {
     this._previousIndex = this._currentIndex
   }
 
-  _addToSequence(sequnceDataStep, sampleKey) {
-    sequnceDataStep.sampleKeys.push({
-      sampleKey,
-    })
-  }
-
   add(soundBuffer, controller) {
     const sound = {
       sampleKey: this._createSampleKey(),
@@ -50,17 +64,16 @@ export default class MusicSequence extends BaseSequence {
     this.samplePlayer.add(sound.sampleKey, soundBuffer)
     this._addToSequence(
       this.SEQUENCE_DATA[this._currentIndex],
+      controller,
       sound.sampleKey
     )
+    this._setColorByIndex(this._currentIndex)
 
     //this.samplePlayer.get(sound.sampleKey).connect(this.pitchShift)
 
-    controller.on(
-      "pitch",
-      v => {
-        //console.log(v);
-       // (this.pitchShift.pitch = Math.floor(v * 12))
-      }
-    )
+    controller.on("pitch", v => {
+      //console.log(v);
+      // (this.pitchShift.pitch = Math.floor(v * 12))
+    })
   }
 }

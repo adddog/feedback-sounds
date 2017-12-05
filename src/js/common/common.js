@@ -12,7 +12,10 @@ export const IS_DEV = process.env.NODE_ENV === "development"
 export const keyboard = Keyboard;
 
 export const GUI_O = {
-  toggleViews:noop,
+  toggleViews:()=>{
+    STATE.renderBeats = !STATE.renderBeats
+    STATE.renderMusic = !STATE.renderMusic
+  },
   startRecord:noop,
   stopRecord:noop,
   makeDrone:noop,
@@ -39,6 +42,8 @@ export const STATE = observable({
   files: {},
   fps: 60,
   bmp: Tone.Transport.bpm.value,
+  renderBeats:true,
+  renderMusic:false,
   sequenceDuration: 4,
 })
 

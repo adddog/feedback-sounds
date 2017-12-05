@@ -27,7 +27,7 @@ button
     left: 0
 
 
-.sequencer
+.feedback-sequencer
   position: absolute
   bottom: 0
   left: 0
@@ -48,11 +48,24 @@ button
     height: 100%
     background-color: rgba(255,255,255,.95)
 
+.feedback-sequencer--music,
+.feedback-sequencer--beats
+  position: absolute
+  display: flex
+  justify-content: flex-start
+  align-items: flex-start
+  top: 0
+  left: 0
+  height: 100%
+  width: 100%
+  &.hide
+    display: none
+
 .sequencer-step
   position: relative
   cursor: pointer
-  width: auto
   flex: 1
+  width: auto
   height: 100%
   background-color: red
   margin-top: 10px
@@ -62,6 +75,11 @@ button
     @extend %sequencer-active
   &:hover
     @extend %sequencer-active
+
+.feedback-sequencer--music
+  padding-left: 1px
+  .sequencer-step
+    margin-left: 0px
 
 .mesh-timer
   width: 10px

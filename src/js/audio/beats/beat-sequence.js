@@ -1,4 +1,3 @@
-import Color from "color"
 import Tone from "tone"
 import { values, keys, sample, random } from "lodash"
 import {
@@ -35,15 +34,10 @@ export default class Beats extends BaseSequence {
     this._currentTime = 0
     this._previousIndex = 0
 
-    let container
-    if (!IS_DEV) {
-      container = document.createElement("div")
-      container.classList.add("sequencer")
-      STATE.containerEl.appendChild(container)
-    } else {
-      container = document.querySelector(".sequencer")
-      document.body.appendChild(container)
-    }
+    this._containerEl = document.querySelector(
+      ".feedback-sequencer--beats"
+    )
+
     this.SEQUENCE_STEPS_ARR.forEach((step, i) => {
       const el = document.createElement("div")
       el.setAttribute("data-index", i)
@@ -59,9 +53,9 @@ export default class Beats extends BaseSequence {
           this._setClassOnStep(e.currentTarget, false)
         }
       })
-      container.appendChild(el)
+      this._containerEl.appendChild(el)
       this.SEQUENCE_DATA[i].el = el
-      this.setColorByIndex(i)
+      this._setColorByIndex(i)
     })
 
     Emitter.on("object:clicked", ({ props, hit }) => {
@@ -71,7 +65,7 @@ export default class Beats extends BaseSequence {
       if (this._selectedIndexs.length) {
         this._selectedIndexs.forEach(i => {
           this._addToSequence(this.SEQUENCE_DATA[i], props, sampleKey)
-          this.setColorByIndex(i)
+          this._setColorByIndex(i)
           this._setClassOnStep(this.SEQUENCE_DATA[i].el, false)
         })
       } else {
@@ -80,7 +74,7 @@ export default class Beats extends BaseSequence {
           props,
           sampleKey
         )
-        this.setColorByIndex(this._currentIndex)
+        this._setColorByIndex(this._currentIndex)
       }
       this._selectedIndexs.length = 0
     })
@@ -89,55 +83,44 @@ export default class Beats extends BaseSequence {
       const type = props.shape.value
       this.SEQUENCE_DATA.forEach((sequenceData, i) => {
         let _tmp = sequenceData.sampleKeys.filter(
-          soundObj => soundObj.meshProps.uuid !== uuid
+          soundObj => soundObj.props.uuid !== uuid
         )
         if (_tmp.length !== sequenceData.sampleKeys.length) {
           sequenceData.sampleKeys = _tmp
-          this.setColorByIndex(i, -1)
+          this._setColorByIndex(i, -1)
         }
       })
     })
-  }
 
-  _setClassOnStep(el, isActive = false) {
-    el.classList[isActive ? "add" : "remove"]("active")
-  }
-
-  _addToSequence(sequnceDataStep, props, sampleKey) {
-    console.log(
-      `${sampleKey} ${this._samples[sampleKey]}`,
-      `with ${props.uuid}`
-    )
-    sequnceDataStep.sampleKeys.push({
-      meshProps: props,
-      sampleKey,
-    })
-  }
-
-  setColorByIndex(index, dir = 1) {
-    this.SEQUENCE_DATA[
-      index
-    ].el.style.backgroundColor = this.SEQUENCE_DATA[index].color
-      .darken(
-        0.25 * dir * this.SEQUENCE_DATA[index].sampleKeys.length
-      )
-      .hsl()
-      .string()
+    this.toggleActive(STATE.renderBeats)
+    STATE.on("renderBeats", v => this.toggleActive(v))
   }
 
   _onUpdate(time, col) {
     this._currentIndex = col
 
-    if (this._selectedIndexs.indexOf(this._previousIndex) < 0) {
+    if (!this._isHidden) {
+      if (this._selectedIndexs.indexOf(this._previousIndex) < 0) {
+        this._setClassOnStep(
+          this.SEQUENCE_DATA[this._previousIndex].el,
+          false
+        )
+      }
       this._setClassOnStep(
-        this.SEQUENCE_DATA[this._previousIndex].el,
-        false
+        this.SEQUENCE_DATA[this._currentIndex].el,
+        true
       )
+
+      this.SEQUENCE_DATA[
+        this._previousIndex
+      ].sampleKeys.forEach(soundObj => {
+        soundObj.props.ambientLightAmount.value =
+          REGL_CONST.AMBIENT_LIGHT
+        soundObj.props.ambientLightAmount.value =
+          REGL_CONST.DIFFUSE_LIGHT
+        soundObj.props.scaleAmount.value = REGL_CONST.SCALE
+      })
     }
-    this._setClassOnStep(
-      this.SEQUENCE_DATA[this._currentIndex].el,
-      true
-    )
 
     if (this._currentIndex === 0 && this._currentTime) {
       STATE.sequenceDuration = time - this._currentTime
@@ -145,25 +128,15 @@ export default class Beats extends BaseSequence {
     }
 
     this.SEQUENCE_DATA[
-      this._previousIndex
-    ].sampleKeys.forEach(soundObj => {
-      soundObj.meshProps.ambientLightAmount.value =
-        REGL_CONST.AMBIENT_LIGHT
-      soundObj.meshProps.ambientLightAmount.value =
-        REGL_CONST.DIFFUSE_LIGHT
-      soundObj.meshProps.scaleAmount.value = REGL_CONST.SCALE
-    })
-
-    this.SEQUENCE_DATA[
       this._currentIndex
     ].sampleKeys.forEach(soundObj => {
-      soundObj.meshProps.ambientLightAmount.value = 1
-      soundObj.meshProps.diffuseLightAmount.value = 1
-      soundObj.meshProps.scaleAmount.value =
-        1 +
-        1 *
-          Math.abs(soundObj.meshProps.position[2]) /
-          REGL_CONST.MAX_Z
+      if (!this._isHidden) {
+        soundObj.props.ambientLightAmount.value = 1
+        soundObj.props.diffuseLightAmount.value = 1
+        soundObj.props.scaleAmount.value =
+          1 +
+          1 * Math.abs(soundObj.props.position[2]) / REGL_CONST.MAX_Z
+      }
       let vel = Math.random() * 0.2 + 0.2
       this.samplePlayer
         .get(soundObj.sampleKey)

@@ -5,8 +5,8 @@ import { mat4 } from "gl-matrix"
 import { v4 } from "uuid"
 
 export const torusSettings = () => ({
-  majorSegments: 4,
-  minorSegments: 8,
+  majorSegments: 3,
+  minorSegments: 6,
 })
 
 export const reglGeo = (regl, geo) => {
